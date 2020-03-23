@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -43,6 +45,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // add toolbar
+        setSupportActionBar(findViewById(R.id.toolbar))
     }
 
     // if the permission is not granted
@@ -79,4 +84,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // add menu
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.options, menu)
+        return true
+    }
+
+    // when menu items are clicked
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.history -> {
+                true
+            }
+            R.id.help -> {
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 }
