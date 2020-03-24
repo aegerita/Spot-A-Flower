@@ -17,8 +17,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.middle_man.*
 
@@ -33,15 +33,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.content_main)
         setContentView(R.layout.activity_main)
 
-        // declare the button to take photo
+        // declare the button and toolbar for future use
         val cameraButton = findViewById<Button>(R.id.cameraButton)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
 
         // add toolbar
         setSupportActionBar(toolbar)
 
+        // add navigation to toolbar
         val navController = findNavController(R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
         // ask for permission if haven't got one
@@ -107,18 +108,14 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
-            R.id.history -> {
+            // TODO
+            R.id.saved -> {
                 true
             }
-            R.id.help -> {
+            R.id.gallery -> {
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
