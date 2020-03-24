@@ -12,21 +12,37 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupWithNavController
+import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.middle_man.*
 
 class MainActivity : AppCompatActivity() {
 
-    val CAMERA_REQUEST = 1
-    val REQUEST_IMAGE_CAPTURE = 1
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private val CAMERA_REQUEST = 1
+    private val REQUEST_IMAGE_CAPTURE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.content_main)
         setContentView(R.layout.activity_main)
 
         // declare the button to take photo
         val cameraButton = findViewById<Button>(R.id.cameraButton)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+
+        // add toolbar
+        setSupportActionBar(toolbar)
+
+        val navController = findNavController(R.id.nav_host_fragment)
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
 
         // ask for permission if haven't got one
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -45,9 +61,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        // add toolbar
-        setSupportActionBar(findViewById(R.id.toolbar))
     }
 
     // if the permission is not granted
@@ -102,5 +115,10 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

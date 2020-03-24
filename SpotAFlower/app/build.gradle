@@ -6,6 +6,8 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+    kotlinOptions { jvmTarget = "1.8" }
+
     defaultConfig {
         applicationId "com.example.spot_a_flower"
         minSdkVersion 16
@@ -34,4 +36,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
 }

@@ -6,7 +6,7 @@
         android:title="Sign in" />
     <item
         android:id="@+id/history"
-        android:title="HIstory" />
+        android:title="History" />
     <item
         android:id="@+id/saved"
         android:title="Saved" />
