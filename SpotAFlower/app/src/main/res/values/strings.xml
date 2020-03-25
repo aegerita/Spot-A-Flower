@@ -7,4 +7,7 @@
     <string name="setting">Setting</string>
     <string name="help">Help</string>
     <string name="logo">Logo</string>
+    <string name="fail_text">Sorry, search failed</string>
+    <string name="favourite">Favourite</string>
+    <string name="gallery">Gallery</string>
 </resources>

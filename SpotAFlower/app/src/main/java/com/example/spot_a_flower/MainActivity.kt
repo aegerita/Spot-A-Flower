@@ -19,13 +19,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.middle_man.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val CAMERA_REQUEST = 1
-    private val REQUEST_IMAGE_CAPTURE = 1
+    private val cameraRequest = 1
+    private val requestImageCapture = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST
+                this, arrayOf(Manifest.permission.CAMERA), cameraRequest
             )
         }
 
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         cameraButton.setOnClickListener {
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
                 takePictureIntent.resolveActivity(packageManager)?.also {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                    startActivityForResult(takePictureIntent, requestImageCapture)
                 }
             }
         }
@@ -70,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         when (requestCode) {
-            CAMERA_REQUEST -> {
+            cameraRequest -> {
                 if ((grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_DENIED)) {
                     //cameraButton.isEnabled = false
                     cameraButton.setOnClickListener {
@@ -90,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     // for now just replace the logo, later pass it to the neural network
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == requestImageCapture && resultCode == Activity.RESULT_OK) {
             val extras = data?.extras
             val imageBitmap = extras!!["data"] as Bitmap?
             searchFlower(imageBitmap)
@@ -99,15 +98,16 @@ class MainActivity : AppCompatActivity() {
 
     // call neural network to determine result
     private fun searchFlower(imageBitmap: Bitmap?) {
-        if (Math.random() < 0.9) {
+        if (Math.random() < 0.5) {
             searchSuccess()
         } else
-            searchFailed(imageBitmap)
+            searchFailed()
     }
 
     // go to failed page
-    private fun searchFailed(imageBitmap: Bitmap?) {
-        logo.setImageBitmap(imageBitmap)
+    private fun searchFailed() {
+        val intent = Intent(this, SearchFailed::class.java)
+        startActivity(intent)
     }
 
     // go to success page
@@ -122,6 +122,7 @@ class MainActivity : AppCompatActivity() {
     // add menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
+        menu.findItem(R.id.saved).isVisible = false
         return true
     }
 

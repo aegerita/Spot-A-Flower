@@ -5,11 +5,11 @@
     <item
         android:id="@+id/saved"
         android:icon="@android:drawable/star_off"
-        android:title="Favourite"
+        android:title="@string/favourite"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/gallery"
         android:icon="@android:drawable/ic_menu_gallery"
-        android:title="Gallery"
+        android:title="@string/gallery"
         app:showAsAction="ifRoom" />
 </menu>
