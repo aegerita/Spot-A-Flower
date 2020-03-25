@@ -6,18 +6,18 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/account"
-            android:title="Sign in" />
+            android:title="@string/sign_in" />
         <item
             android:id="@+id/history"
-            android:title="History" />
+            android:title="@string/history" />
         <item
             android:id="@+id/saved"
-            android:title="Saved" />
+            android:title="@string/saved" />
         <item
             android:id="@+id/setting"
-            android:title="Setting" />
+            android:title="@string/setting" />
         <item
             android:id="@+id/help"
-            android:title="Help" />
+            android:title="@string/help" />
     </group>
 </menu>

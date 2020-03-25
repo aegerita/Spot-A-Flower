@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.middle_man.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private val CAMERA_REQUEST = 1
     private val REQUEST_IMAGE_CAPTURE = 1
 
@@ -94,8 +93,30 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val extras = data?.extras
             val imageBitmap = extras!!["data"] as Bitmap?
-            logo.setImageBitmap(imageBitmap)
+            searchFlower(imageBitmap)
         }
+    }
+
+    // call neural network to determine result
+    private fun searchFlower(imageBitmap: Bitmap?) {
+        if (Math.random() < 0.9) {
+            searchSuccess()
+        } else
+            searchFailed(imageBitmap)
+    }
+
+    // go to failed page
+    private fun searchFailed(imageBitmap: Bitmap?) {
+        logo.setImageBitmap(imageBitmap)
+    }
+
+    // go to success page
+    private fun searchSuccess() {
+        val intent = Intent(this, SearchSuccess::class.java)
+        intent.putExtra("flower1", "red flower")
+        intent.putExtra("flower2", "yellow flower")
+        intent.putExtra("flower3", "blue flower")
+        startActivity(intent)
     }
 
     // add menu

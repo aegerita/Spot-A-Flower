@@ -8,5 +8,14 @@
         android:id="@+id/homeContent"
         android:name="com.example.spot_a_flower.HomeContent"
         android:label="content_main"
-        tools:layout="@layout/content_main" />
+        tools:layout="@layout/content_main">
+        <action
+            android:id="@+id/action_homeContent_to_searchSuccess"
+            app:destination="@id/searchSuccess" />
+    </fragment>
+    <activity
+        android:id="@+id/searchSuccess"
+        android:name="com.example.spot_a_flower.SearchSuccess"
+        android:label="activity_search_success"
+        tools:layout="@layout/activity_search_success" />
 </navigation>

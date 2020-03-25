@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Spot-A-Flower</string>
     <string name="take_picture">Take Picture</string>
+    <string name="sign_in">Sign in</string>
+    <string name="history">History</string>
+    <string name="saved">Saved</string>
+    <string name="setting">Setting</string>
+    <string name="help">Help</string>
+    <string name="logo">Logo</string>
 </resources>
