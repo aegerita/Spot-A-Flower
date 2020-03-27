@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
@@ -23,8 +24,10 @@ import kotlinx.android.synthetic.main.middle_man.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val cameraRequest = 1
-    private val requestImageCapture = 1
+    private val permissionRequest = 1
+    private val requestImageCapture = 2
+    private val requestGalleryPhoto = 3
+    private var galleryPermitted = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +46,22 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        // ask for permission if haven't got one
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        // ask for camera permission if haven't got one
+        if (ContextCompat.checkSelfPermission(
+                this, arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ).toString()
+            )
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.CAMERA), cameraRequest
+                this, arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ), permissionRequest
             )
         }
 
@@ -69,9 +82,8 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         when (requestCode) {
-            cameraRequest -> {
-                if ((grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_DENIED)) {
-                    //cameraButton.isEnabled = false
+            permissionRequest -> {
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     cameraButton.setOnClickListener {
                         Toast.makeText(
                             this@MainActivity,
@@ -80,19 +92,54 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
+                if (grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                    galleryPermitted = false
+                    invalidateOptionsMenu()
+                }
+                if (grantResults[2] == PackageManager.PERMISSION_DENIED) {
+                }
             }
         }
         return
     }
 
-    // save the photo after it's taken
-    // for now just replace the logo, later pass it to the neural network
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == requestImageCapture && resultCode == Activity.RESULT_OK) {
-            val extras = data?.extras
-            val imageBitmap = extras!!["data"] as Bitmap?
+        if (resultCode == Activity.RESULT_CANCELED)
+            return
+
+        // save the photo after it's taken, pass it to the neural network
+        if (requestCode == requestImageCapture) {
+            val imageBitmap = data?.extras!!["data"] as Bitmap?
+
+            //if (ContextCompat.checkSelfPermission(this,
+            //      Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            //!= PackageManager.PERMISSION_GRANTED) {
+            MediaStore.Images.Media.insertImage(
+                contentResolver, imageBitmap,
+                "Flower", "from Spot-A-Flower"
+            )
+            //} else {
+            Toast.makeText(
+                this,
+                "Allow Written Access to Storage to Save Your Image!",
+                Toast.LENGTH_SHORT
+            ).show()
+            //}
+
             searchFlower(imageBitmap)
+
+            // get photo from gallery and pass it to neural network
+        } else if (requestCode == requestGalleryPhoto) {
+            if (data != null) {
+                val selectedImage: Uri? = data.data
+                val imageBitmap =
+                    MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
+                //logo.setImageURI(selectedImage)
+                searchFlower(imageBitmap)
+            } else {
+                Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -119,25 +166,35 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    // add menu
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.options, menu)
-        menu.findItem(R.id.saved).isVisible = false
-        return true
-    }
-
     // when menu items are clicked
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
-            // TODO
-            R.id.saved -> {
+            R.id.gallery -> {
+                val intent = Intent(Intent.ACTION_PICK)
+                intent.type = "image/*"
+                startActivityForResult(intent, requestGalleryPhoto)
                 true
             }
-            R.id.gallery -> {
+            R.id.falseGallery -> {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Pls Allow Access to Photo Storage",
+                    Toast.LENGTH_SHORT
+                ).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        menu.clear()
+        menuInflater.inflate(R.menu.options, menu)
+        menu.findItem(R.id.gallery).isVisible = galleryPermitted
+        menu.findItem(R.id.falseGallery).isVisible = !galleryPermitted
+        menu.findItem(R.id.saved).isVisible = false
+        return true
+    }
+
 }

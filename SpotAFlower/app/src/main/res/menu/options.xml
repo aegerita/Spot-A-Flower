@@ -12,4 +12,9 @@
         android:icon="@android:drawable/ic_menu_gallery"
         android:title="@string/gallery"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/falseGallery"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="@string/gallery"
+        app:showAsAction="ifRoom" />
 </menu>
