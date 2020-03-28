@@ -20,7 +20,6 @@ class SearchSuccess : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
         menu.findItem(R.id.gallery).isVisible = false
-        menu.findItem(R.id.falseGallery).isVisible = false
         return true
     }
 }

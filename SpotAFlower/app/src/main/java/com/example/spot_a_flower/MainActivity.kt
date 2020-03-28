@@ -5,8 +5,10 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
@@ -16,18 +18,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.middle_man.*
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
-    private val permissionRequest = 1
-    private val requestImageCapture = 2
-    private val requestGalleryPhoto = 3
-    private var galleryPermitted = true
+    private lateinit var currentPhotoPath: String
+    private val permissionRequest = 0
+    private val requestImageCapture = 1
+    private val requestGalleryPhoto = 2
+    private var storagePermitted = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +55,13 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        // ask for camera permission if haven't got one
+        // ask for permissions if haven't got one
         if (ContextCompat.checkSelfPermission(
                 this, arrayOf(
                     Manifest.permission.CAMERA,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.INTERNET
                 ).toString()
             )
             != PackageManager.PERMISSION_GRANTED
@@ -60,7 +70,8 @@ class MainActivity : AppCompatActivity() {
                 this, arrayOf(
                     Manifest.permission.CAMERA,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.INTERNET
                 ), permissionRequest
             )
         }
@@ -68,8 +79,25 @@ class MainActivity : AppCompatActivity() {
         // take photo when button is clicked
         cameraButton.setOnClickListener {
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                // Ensure that there's a camera activity to handle the intent
                 takePictureIntent.resolveActivity(packageManager)?.also {
-                    startActivityForResult(takePictureIntent, requestImageCapture)
+                    // Create the File where the photo should go
+                    val photoFile: File? = try {
+                        createImageFile()
+                    } catch (ex: IOException) {
+                        Toast.makeText(this, "Can't Save Image", Toast.LENGTH_SHORT).show()
+                        null
+                    }
+                    // Continue only if the File was successfully created
+                    photoFile?.also {
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            this,
+                            "com.example.spot_a_flower.fileProvider",
+                            it
+                        )
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        startActivityForResult(takePictureIntent, requestImageCapture)
+                    }
                 }
             }
         }
@@ -83,6 +111,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         when (requestCode) {
             permissionRequest -> {
+                // camera
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     cameraButton.setOnClickListener {
                         Toast.makeText(
@@ -92,11 +121,11 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-                if (grantResults[1] == PackageManager.PERMISSION_DENIED) {
-                    galleryPermitted = false
-                    invalidateOptionsMenu()
-                }
-                if (grantResults[2] == PackageManager.PERMISSION_DENIED) {
+                // storage
+                if (grantResults[1] == PackageManager.PERMISSION_DENIED ||
+                    grantResults[2] == PackageManager.PERMISSION_DENIED
+                ) {
+                    storagePermitted = false
                 }
             }
         }
@@ -105,28 +134,33 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        // do nothing if activity cancelled
         if (resultCode == Activity.RESULT_CANCELED)
             return
 
         // save the photo after it's taken, pass it to the neural network
         if (requestCode == requestImageCapture) {
-            val imageBitmap = data?.extras!!["data"] as Bitmap?
+            // get full size image
+            val options = BitmapFactory.Options()
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888
+            val imageBitmap = BitmapFactory.decodeFile(currentPhotoPath, options)
 
-            //if (ContextCompat.checkSelfPermission(this,
-            //      Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            //!= PackageManager.PERMISSION_GRANTED) {
-            MediaStore.Images.Media.insertImage(
-                contentResolver, imageBitmap,
-                "Flower", "from Spot-A-Flower"
-            )
-            //} else {
-            Toast.makeText(
-                this,
-                "Allow Written Access to Storage to Save Your Image!",
-                Toast.LENGTH_SHORT
-            ).show()
-            //}
-
+            // save image to Pictures
+            if (storagePermitted) {
+                MediaStore.Images.Media.insertImage(
+                    contentResolver, imageBitmap,
+                    "Flower_" + SimpleDateFormat("yyyyMMdd_HHMMSS", Locale.CANADA).format(Date()),
+                    "from Spot-A-Flower"
+                )
+            } else {
+                // if permission not granted
+                Toast.makeText(
+                    this,
+                    "Allow Storage Access to Save Your Image",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            //logo.setImageBitmap(imageBitmap)
             searchFlower(imageBitmap)
 
             // get photo from gallery and pass it to neural network
@@ -166,35 +200,48 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    // add menu
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.options, menu)
+        menu.findItem(R.id.saved).isVisible = false
+        return true
+    }
+
     // when menu items are clicked
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
             R.id.gallery -> {
-                val intent = Intent(Intent.ACTION_PICK)
-                intent.type = "image/*"
-                startActivityForResult(intent, requestGalleryPhoto)
-                true
-            }
-            R.id.falseGallery -> {
-                Toast.makeText(
-                    this@MainActivity,
-                    "Pls Allow Access to Photo Storage",
-                    Toast.LENGTH_SHORT
-                ).show()
+                if (storagePermitted) {
+                    val intent = Intent(Intent.ACTION_PICK)
+                    intent.type = "image/*"
+                    startActivityForResult(intent, requestGalleryPhoto)
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Pls Allow Access to Photo Storage",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menu.clear()
-        menuInflater.inflate(R.menu.options, menu)
-        menu.findItem(R.id.gallery).isVisible = galleryPermitted
-        menu.findItem(R.id.falseGallery).isVisible = !galleryPermitted
-        menu.findItem(R.id.saved).isVisible = false
-        return true
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHMMSS", Locale.CANADA).format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
     }
 
 }
