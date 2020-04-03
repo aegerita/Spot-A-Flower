@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/flower_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="18dp"
+    android:layout_marginLeft="18dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="3dp"
+    android:layout_marginRight="3dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/flower_detail_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="4dp"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="2dp"
+        app:contentPadding="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_more"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/flower_name_card">
+
+        <TextView
+            android:id="@+id/flower_detail"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@color/ic_launcher_background"
+            android:ellipsize="end"
+            android:fadingEdgeLength="10dp"
+            android:maxLines="4"
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="4dp"
+            android:requiresFadingEdge="vertical"
+            android:text="@string/description" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/flower_icon_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        app:cardBackgroundColor="@color/colorPrimaryDark"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="6dp"
+        app:contentPadding="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/flower_icon"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@color/ic_launcher_background"
+            android:contentDescription="@string/flower_icon"
+            app:srcCompat="@drawable/logo" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/flower_description_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="104dp"
+        android:layout_marginLeft="104dp"
+        android:layout_marginTop="60dp"
+        app:cardBackgroundColor="@color/colorPrimaryDark"
+        app:cardCornerRadius="6dp"
+        app:contentPadding="2.5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/flower_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="serif-monospace"
+            android:paddingStart="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="1.5dp"
+            android:paddingEnd="4dp"
+            android:paddingRight="4dp"
+            android:text="@string/_100_probability"
+            android:textAllCaps="false"
+            android:textColor="@color/ic_launcher_background"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/flower_name_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="105dp"
+        android:layout_marginLeft="105dp"
+        android:layout_marginTop="29dp"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="4dp"
+        app:contentPadding="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/flower_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fontFamily="sans-serif-medium"
+            android:paddingStart="22dp"
+            android:paddingLeft="22dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="2dp"
+            android:text="@string/flower_name"
+            android:textColor="@color/ic_launcher_background"
+            android:textSize="19sp" />
+    </androidx.cardview.widget.CardView>
+
+    <ImageButton
+        android:id="@+id/button_more"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/more"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+
+    <ImageButton
+        android:id="@+id/button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/saved"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toEndOf="@id/flower_name_card"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2"
+        app:srcCompat="@android:drawable/star_off" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

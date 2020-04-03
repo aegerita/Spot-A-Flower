@@ -203,7 +203,6 @@ class MainActivity : AppCompatActivity() {
     // add menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
-        menu.findItem(R.id.saved).isVisible = false
         return true
     }
 

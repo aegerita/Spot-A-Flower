@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Spot-A-Flower</string>
     <string name="take_picture">Take Picture</string>
-    <string name="sign_in">Sign in</string>
+    <string name="sign_in">Sign in/up</string>
     <string name="history">History</string>
     <string name="saved">Saved</string>
     <string name="setting">Setting</string>
@@ -10,4 +10,10 @@
     <string name="fail_text">Sorry, search failed</string>
     <string name="favourite">Favourite</string>
     <string name="gallery">Gallery</string>
+    <string name="flower_icon">flower icon</string>
+    <string name="_100_probability">100% Probability</string>
+    <string name="flower_name">Flower Name</string>
+    <string name="todo">TODO</string>
+    <string name="description">eaighfawibf wae r w we f we fa fuhoawij owi g f wa f aw f w f wa foewiabfoiw awioefuhwaieuh w faiwuh fuaw fpuwah f whf wah fpoiawh fpohaw w f wao faw hf awihfpwr r ega e r df gea w ag wa eg wae gafawefjwhae waif waiu fuew awe fwe aw waff wfa awi wawegj w</string>
+    <string name="more">more</string>
 </resources>
