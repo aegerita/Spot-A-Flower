@@ -11,7 +11,7 @@
     android:layout_marginRight="3dp">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/flower_detail_card"
+        android:id="@+id/flower_description_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@id/flower_name_card">
 
         <TextView
-            android:id="@+id/flower_detail"
+            android:id="@+id/flower_description"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:background="@color/ic_launcher_background"
@@ -72,11 +72,11 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/flower_description_card"
+        android:id="@+id/flower_detail_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="104dp"
-        android:layout_marginLeft="104dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginLeft="105dp"
         android:layout_marginTop="60dp"
         app:cardBackgroundColor="@color/colorPrimaryDark"
         app:cardCornerRadius="6dp"
@@ -85,7 +85,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/flower_description"
+            android:id="@+id/flower_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"

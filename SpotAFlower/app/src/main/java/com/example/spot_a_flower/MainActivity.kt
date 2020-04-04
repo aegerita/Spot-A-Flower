@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
             //logo.setImageBitmap(imageBitmap)
-            searchFlower(imageBitmap)
+            searchFlower()
 
             // get photo from gallery and pass it to neural network
         } else if (requestCode == requestGalleryPhoto) {
@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
                 val imageBitmap =
                     MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                 //logo.setImageURI(selectedImage)
-                searchFlower(imageBitmap)
+                searchFlower()
             } else {
                 Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
             }
@@ -178,7 +178,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // call neural network to determine result
-    private fun searchFlower(imageBitmap: Bitmap?) {
+    private fun searchFlower() {
         if (Math.random() < 0.5) {
             searchSuccess()
         } else
@@ -194,9 +194,6 @@ class MainActivity : AppCompatActivity() {
     // go to success page
     private fun searchSuccess() {
         val intent = Intent(this, SearchSuccess::class.java)
-        intent.putExtra("flower1", "red flower")
-        intent.putExtra("flower2", "yellow flower")
-        intent.putExtra("flower3", "blue flower")
         startActivity(intent)
     }
 
