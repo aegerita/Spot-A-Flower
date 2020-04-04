@@ -30,7 +30,7 @@
         </provider>
 
         <activity
-            android:name=".SearchSuccess"
+            android:name=".FlowerSearch"
             android:parentActivityName=".MainActivity" />
 
         <activity
