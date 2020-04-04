@@ -8,13 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 
-class SearchSuccess : AppCompatActivity() {
+class FlowerSearch : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     private val names = arrayOf("Lily", "Tulip", "Orchids", "Rose", "Poppy", "Sunflowers", "Iris")
-    val myDataset: MutableList<DummyItem> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +25,27 @@ class SearchSuccess : AppCompatActivity() {
         // Get a support ActionBar corresponding to this toolbar and enable the Up button
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // change flower dataset according to where the user clicked from (saved, history or search)
+        val scenario = intent.getStringExtra("Parent")
+        var constant = 1
+        when (scenario) {
+            "history" -> {
+                constant = 1
+            }
+            "saved" -> {
+                constant = 2
+            }
+            else -> constant = 3
+        }
 
-        for (i in 1..25) {
+        val myDataset: MutableList<Flower> = ArrayList()
+        for (i in 1..constant) {
             val name = names[(Math.random() * names.size).toInt()]
-            val detail = (Math.random() * 100).toInt()
+            val detail: String = (Math.random() * 100).toInt().toString() + "% Probability"
             //val icon = R.drawable.logo
             val description = getString(R.string.description)
 
-            myDataset.add(DummyItem(name, detail, description, false))
+            myDataset.add(Flower(name, detail, description, false))
         }
 
         viewManager = LinearLayoutManager(this)
@@ -56,12 +68,12 @@ class SearchSuccess : AppCompatActivity() {
         return true
     }
 
-    data class DummyItem(
+    data class Flower(
         val name: String,
-        val detail: Int,
+        val detail: String,
         val description: String,
         val isSaved: Boolean
     ) {
-        override fun toString(): String = "$name: $detail% Probability\ndescription"
+        override fun toString(): String = "$name: $detail\ndescription"
     }
 }

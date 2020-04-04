@@ -18,7 +18,7 @@
     </fragment>
     <activity
         android:id="@+id/searchSuccess"
-        android:name="com.example.spot_a_flower.SearchSuccess"
+        android:name="com.example.spot_a_flower.FlowerSearch"
         android:label="activity_search_success"
         tools:layout="@layout/activity_search_success" />
     <activity

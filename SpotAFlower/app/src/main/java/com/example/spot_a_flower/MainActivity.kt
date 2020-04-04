@@ -19,9 +19,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.middle_man.*
 import java.io.File
@@ -54,6 +56,43 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
         toolbar.setupWithNavController(navController, appBarConfiguration)
+
+        // set navigation drawer
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.account -> {
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.history -> {
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    val intent = Intent(this, FlowerSearch::class.java)
+                    intent.putExtra("Parent", "history")
+                    startActivity(intent)
+                    true
+                }
+                R.id.saved -> {
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    val intent = Intent(this, FlowerSearch::class.java)
+                    intent.putExtra("Parent", "saved")
+                    startActivity(intent)
+                    true
+                }
+                R.id.setting -> {
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.help -> {
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                else -> {
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    false
+                }
+            }
+        }
 
         // ask for permissions if haven't got one
         if (ContextCompat.checkSelfPermission(
@@ -193,7 +232,8 @@ class MainActivity : AppCompatActivity() {
 
     // go to success page
     private fun searchSuccess() {
-        val intent = Intent(this, SearchSuccess::class.java)
+        val intent = Intent(this, FlowerSearch::class.java)
+        intent.putExtra("Parent", "search")
         startActivity(intent)
     }
 

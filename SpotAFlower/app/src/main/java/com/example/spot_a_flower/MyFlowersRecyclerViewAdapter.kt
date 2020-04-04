@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
 
 class MyFlowersRecyclerViewAdapter(
-    private val flowers: MutableList<SearchSuccess.DummyItem>
+    private val Flowers: MutableList<FlowerSearch.Flower>
 ) : RecyclerView.Adapter<MyFlowersRecyclerViewAdapter.ViewHolder>() {
 
     // Create new views (invoked by the layout manager)
@@ -24,9 +24,9 @@ class MyFlowersRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // - get element from your data set at this position
         // - replace the contents of the view with that element
-        val item = flowers[position]
+        val item = Flowers[position]
         holder.name.text = item.name
-        holder.detail.text = "${item.detail}% Probability"
+        holder.detail.text = item.detail
         holder.description.text = item.description
         //holder.icon.setImageDrawable(item.icon)
 
@@ -37,7 +37,7 @@ class MyFlowersRecyclerViewAdapter(
     }
 
     // Return the size of your data set (invoked by the layout manager)
-    override fun getItemCount(): Int = flowers.size
+    override fun getItemCount(): Int = Flowers.size
 
     inner class ViewHolder(val flowerCard: View) : RecyclerView.ViewHolder(flowerCard) {
         val name: TextView = flowerCard.flower_name
