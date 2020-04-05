@@ -3,6 +3,8 @@ package com.example.spot_a_flower
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -28,16 +30,26 @@ class RecyclerViewAdapter(
         holder.name.text = flower.name
         holder.detail.text = flower.detail
         holder.description.text = flower.description
+        holder.moreButton.setOnClickListener {
+            holder.moreButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
+            println("go to the supposed website")
+        }
+        holder.saveButton.setOnClickListener {
+            holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
+            println("this flower is saved")
+        }
     }
 
     // Return the size of your data set (invoked by the layout manager)
     override fun getItemCount(): Int = Flowers.size
 
     // view holder, declare the UI component
-    inner class ViewHolder(val flowerCard: View) : RecyclerView.ViewHolder(flowerCard) {
+    inner class ViewHolder(flowerCard: View) : RecyclerView.ViewHolder(flowerCard) {
         val name: TextView = flowerCard.flower_name
         val detail: TextView = flowerCard.flower_detail
         val description: TextView = flowerCard.flower_description
         val icon: ImageView = flowerCard.flower_icon
+        val saveButton: ImageButton = flowerCard.button_save
+        val moreButton: ImageButton = flowerCard.button_more
     }
 }
