@@ -1,5 +1,8 @@
 package com.example.spot_a_flower
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
 
 class RecyclerViewAdapter(
+    private val context: Context,
     private val Flowers: MutableList<FlowerSearch.Flower>
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
@@ -32,11 +36,12 @@ class RecyclerViewAdapter(
         holder.description.text = flower.description
         holder.moreButton.setOnClickListener {
             holder.moreButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
-            println("go to the supposed website")
+            val i = Intent(Intent.ACTION_VIEW, Uri.parse(flower.link))
+            context.startActivity(i)
         }
         holder.saveButton.setOnClickListener {
             holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
-            println("this flower is saved")
+            //if (holder.saveButton.tag == 0)
         }
     }
 

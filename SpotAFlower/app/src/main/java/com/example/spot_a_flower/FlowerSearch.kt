@@ -27,13 +27,15 @@ class FlowerSearch : AppCompatActivity() {
 
         // change flower dataset according to where the user clicked from (saved, history or search)
         val scenario = intent.getStringExtra("Parent")
-        var constant = 1
+        val constant: Int
         when (scenario) {
             "history" -> {
                 constant = 5
+                supportActionBar?.title = getString(R.string.history)
             }
             "saved" -> {
                 constant = 10
+                supportActionBar?.title = getString(R.string.saved)
             }
             else -> constant = 15
         }
@@ -45,13 +47,14 @@ class FlowerSearch : AppCompatActivity() {
             val detail: String = (Math.random() * 100).toInt().toString() + "% Probability"
             //val icon = R.drawable.logo
             val description = getString(R.string.description)
+            val link = "https://en.wikipedia.org/wiki/${name}"
 
-            myDataset.add(Flower(name, detail, description))
+            myDataset.add(Flower(name, detail, description, link))
         }
 
         // call the recycler view
         viewManager = LinearLayoutManager(this)
-        viewAdapter = RecyclerViewAdapter(myDataset)
+        viewAdapter = RecyclerViewAdapter(this, myDataset)
 
         recyclerView = findViewById<RecyclerView>(R.id.flower_list).apply {
             setHasFixedSize(true)
@@ -69,7 +72,12 @@ class FlowerSearch : AppCompatActivity() {
     }
 
     // flower class
-    data class Flower(val name: String, val detail: String, val description: String) {
+    data class Flower(
+        val name: String,
+        val detail: String,
+        val description: String,
+        val link: String
+    ) {
         override fun toString(): String = "$name: $detail\ndescription"
     }
 }
