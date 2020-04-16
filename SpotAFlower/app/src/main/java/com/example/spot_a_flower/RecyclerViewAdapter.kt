@@ -41,11 +41,11 @@ class RecyclerViewAdapter(
             holder.saveButton.setImageResource(android.R.drawable.star_on)
         } else holder.saveButton.tag = 0
 
-        // open link in browser
-        holder.moreButton.setOnClickListener {
-            holder.moreButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
-            val i = Intent(Intent.ACTION_VIEW, Uri.parse(flower.link))
-            context.startActivity(i)
+        holder.itemView.setOnClickListener {
+            // when the flower is clicked, open link in browser
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(flower.link)))
+            //TODO
+            println("save ${flower.name} to history")
         }
 
         // change star and save to database
@@ -54,10 +54,12 @@ class RecyclerViewAdapter(
             if (holder.saveButton.tag == 1) {
                 holder.saveButton.tag = 0
                 holder.saveButton.setImageResource(android.R.drawable.star_off)
+                //TODO
                 println("cancel storing " + flower.name)
             } else {
                 holder.saveButton.tag = 1
                 holder.saveButton.setImageResource(android.R.drawable.star_on)
+                //TODO
                 println("store " + flower.name)
             }
         }
@@ -73,6 +75,5 @@ class RecyclerViewAdapter(
         val description: TextView = flowerCard.flower_description
         val icon: ImageView = flowerCard.flower_icon
         val saveButton: ImageButton = flowerCard.button_save
-        val moreButton: ImageButton = flowerCard.button_more
     }
 }
