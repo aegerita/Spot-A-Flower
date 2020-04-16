@@ -13,14 +13,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/failText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/fail_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/failImage"
+        app:layout_constraintTop_toBottomOf="@id/failImage"
         app:layout_constraintVertical_bias="0.10" />
 
     <ImageView

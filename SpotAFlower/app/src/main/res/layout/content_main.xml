@@ -8,7 +8,6 @@
     tools:showIn="@layout/middle_man">
 
     <ImageView
-        android:id="@+id/logo"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
