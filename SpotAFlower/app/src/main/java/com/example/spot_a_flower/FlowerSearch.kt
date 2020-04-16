@@ -48,8 +48,9 @@ class FlowerSearch : AppCompatActivity() {
             //val icon = R.drawable.logo
             val description = getString(R.string.description)
             val link = "https://en.wikipedia.org/wiki/${name}"
+            val isSaved = Math.random() > 0.5
 
-            myDataset.add(Flower(name, detail, description, link))
+            myDataset.add(Flower(name, detail, description, link, isSaved))
         }
 
         // call the recycler view
@@ -76,7 +77,8 @@ class FlowerSearch : AppCompatActivity() {
         val name: String,
         val detail: String,
         val description: String,
-        val link: String
+        val link: String,
+        val isSaved: Boolean
     ) {
         override fun toString(): String = "$name: $detail\ndescription"
     }

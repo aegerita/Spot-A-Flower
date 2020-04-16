@@ -34,14 +34,32 @@ class RecyclerViewAdapter(
         holder.name.text = flower.name
         holder.detail.text = flower.detail
         holder.description.text = flower.description
+
+        // initialize save button
+        if (flower.isSaved) {
+            holder.saveButton.tag = 1
+            holder.saveButton.setImageResource(android.R.drawable.star_on)
+        } else holder.saveButton.tag = 0
+
+        // open link in browser
         holder.moreButton.setOnClickListener {
             holder.moreButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
             val i = Intent(Intent.ACTION_VIEW, Uri.parse(flower.link))
             context.startActivity(i)
         }
+
+        // change star and save to database
         holder.saveButton.setOnClickListener {
             holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
-            //if (holder.saveButton.tag == 0)
+            if (holder.saveButton.tag == 1) {
+                holder.saveButton.tag = 0
+                holder.saveButton.setImageResource(android.R.drawable.star_off)
+                println("cancel storing " + flower.name)
+            } else {
+                holder.saveButton.tag = 1
+                holder.saveButton.setImageResource(android.R.drawable.star_on)
+                println("store " + flower.name)
+            }
         }
     }
 
