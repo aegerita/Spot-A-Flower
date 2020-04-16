@@ -9,10 +9,8 @@ class SearchFailed : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_failed)
 
-        // my_child_toolbar is defined in the layout file
-        setSupportActionBar(findViewById(R.id.toolbar))
-
         // Get a support ActionBar corresponding to this toolbar and enable the Up button
+        setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

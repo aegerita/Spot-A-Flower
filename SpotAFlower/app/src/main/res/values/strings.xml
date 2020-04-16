@@ -1,16 +1,32 @@
 <resources>
     <string name="app_name">Spot-A-Flower</string>
-    <string name="take_picture">Take Picture</string>
+
+    <!-- Drawer Titles -->
     <string name="sign_in">Sign in/up</string>
     <string name="history">History</string>
     <string name="saved">Saved</string>
-    <string name="setting">Setting</string>
+    <string name="setting">Settings</string>
     <string name="help">Help</string>
+
+    <string name="take_picture">Take Picture</string>
     <string name="logo">Logo</string>
     <string name="fail_text">Sorry, search failed</string>
     <string name="gallery">Gallery</string>
     <string name="flower_icon">flower icon</string>
-    <string name="_100_probability">100% Probability</string>
-    <string name="flower_name">Flower Name</string>
     <string name="description"> Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have "lily" in their common name but are not related to true lilies.</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

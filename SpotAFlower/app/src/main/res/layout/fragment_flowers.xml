@@ -85,12 +85,11 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"
             android:fontFamily="serif-monospace"
-            android:paddingStart="16dp"
-            android:paddingLeft="16dp"
+            android:paddingStart="18dp"
+            android:paddingLeft="18dp"
             android:paddingTop="1.5dp"
             android:paddingEnd="4dp"
             android:paddingRight="4dp"
-            android:text="@string/_100_probability"
             android:textAllCaps="false"
             android:textColor="@color/ic_launcher_background"
             android:textSize="17sp"
@@ -124,7 +123,6 @@
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
             android:paddingBottom="2dp"
-            android:text="@string/flower_name"
             android:textColor="@color/ic_launcher_background"
             android:textSize="19sp" />
     </androidx.cardview.widget.CardView>

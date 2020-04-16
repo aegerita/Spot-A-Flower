@@ -5,6 +5,7 @@ import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -44,11 +45,19 @@ class FlowerSearch : AppCompatActivity() {
         val myDataset: MutableList<Flower> = ArrayList()
         for (i in 1..constant) {
             val name = names[(Math.random() * names.size).toInt()]
-            val detail: String = (Math.random() * 100).toInt().toString() + "% Probability"
+
+            val detail = if (scenario == "history" || scenario == "saved") {
+                val date = Date((Random().nextDouble() * 60 * 60 * 24 * 365).toLong())
+                val sdf = SimpleDateFormat("hh:mm:ss MM/dd", Locale.CANADA)
+                sdf.format(date)
+            } else {
+                (Math.random() * 100).toInt().toString() + "% Probability"
+            }
+
             //val icon = R.drawable.logo
-            val description = getString(R.string.description)
+            val description = "                        " + getString(R.string.description)
             val link = "https://en.wikipedia.org/wiki/${name}"
-            val isSaved = Math.random() > 0.5
+            val isSaved = if (scenario == "saved") true else Math.random() > 0.5
 
             myDataset.add(Flower(name, detail, description, link, isSaved))
         }

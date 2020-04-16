@@ -81,6 +81,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.setting -> {
                     drawer_layout.closeDrawer(GravityCompat.START)
+                    val intent = Intent(this, SettingsActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.help -> {
