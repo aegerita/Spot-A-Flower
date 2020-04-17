@@ -10,6 +10,7 @@ import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
@@ -41,11 +42,18 @@ class RecyclerViewAdapter(
             holder.saveButton.setImageResource(android.R.drawable.star_on)
         } else holder.saveButton.tag = 0
 
-        holder.itemView.setOnClickListener {
-            // when the flower is clicked, open link in browser
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(flower.link)))
-            //TODO
-            println("save ${flower.name} to history")
+        // only if the user choose to open wiki link. The default is true tho
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        if (sharedPreferences.getBoolean("openWiki", true)) {
+            holder.itemView.setOnClickListener {
+                // when the flower is clicked, open link in browser
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(flower.link)))
+                // if the user choose to save to history when open link
+                if (sharedPreferences.getString("addHistoryWhen", "search") == "link") {
+                    // TODO save the flower to history when open wiki link
+                    println("save ${flower.name} to history")
+                }
+            }
         }
 
         // change star and save to database
@@ -54,13 +62,14 @@ class RecyclerViewAdapter(
             if (holder.saveButton.tag == 1) {
                 holder.saveButton.tag = 0
                 holder.saveButton.setImageResource(android.R.drawable.star_off)
-                //TODO
+                // TODO delete saved flower from user database
                 println("cancel storing " + flower.name)
             } else {
                 holder.saveButton.tag = 1
                 holder.saveButton.setImageResource(android.R.drawable.star_on)
-                //TODO
+                // TODO store the flower to user database and user history
                 println("store " + flower.name)
+                println("save ${flower.name} to history")
             }
         }
     }

@@ -7,4 +7,11 @@
         android:icon="@android:drawable/ic_menu_gallery"
         android:title="@string/gallery"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/delete_history"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/gallery"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
 </menu>
