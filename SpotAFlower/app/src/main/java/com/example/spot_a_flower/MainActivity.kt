@@ -14,15 +14,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -50,10 +49,17 @@ class MainActivity : AppCompatActivity() {
         // add toolbar
         setSupportActionBar(toolbar)
 
-        // add navigation to toolbar
-        val navController = findNavController(R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
-        toolbar.setupWithNavController(navController, appBarConfiguration)
+        // add navigation to toolbar by toggle
+        val actionBarDrawerToggle =
+            ActionBarDrawerToggle(
+                this,
+                findViewById(R.id.drawer_layout),
+                toolbar,
+                R.string.open_wiki,
+                R.string.open_wiki
+            )
+        findViewById<DrawerLayout>(R.id.drawer_layout).addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
 
         // set navigation drawer
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
