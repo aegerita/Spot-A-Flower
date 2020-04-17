@@ -25,7 +25,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.middle_man.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -42,7 +41,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.content_main)
         setContentView(R.layout.activity_main)
 
         // declare the button and toolbar for future use

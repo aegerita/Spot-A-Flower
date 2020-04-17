@@ -6,23 +6,6 @@
     <fragment
         android:id="@+id/homeContent"
         android:name="com.example.spot_a_flower.HomeContent"
-        android:label="content_main"
         tools:layout="@layout/content_main">
-        <action
-            android:id="@+id/action_homeContent_to_searchSuccess"
-            app:destination="@id/searchSuccess" />
-        <action
-            android:id="@+id/action_homeContent_to_searchFailed"
-            app:destination="@id/searchFailed" />
     </fragment>
-    <activity
-        android:id="@+id/searchSuccess"
-        android:name="com.example.spot_a_flower.FlowerSearch"
-        android:label="activity_search_success"
-        tools:layout="@layout/activity_search_success" />
-    <activity
-        android:id="@+id/searchFailed"
-        android:name="com.example.spot_a_flower.SearchFailed"
-        android:label="activity_search_failed"
-        tools:layout="@layout/activity_search_failed" />
 </navigation>
