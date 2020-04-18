@@ -6,7 +6,7 @@
     <string name="history">History</string>
     <string name="saved">Saved</string>
     <string name="setting">Settings</string>
-    <string name="helps">Helps &amp; About</string>
+    <string name="helpsAbout">Helps &amp; About</string>
     <string name="search">Spot-A-Flower</string>
 
     <!-- Preference Titles -->
@@ -15,11 +15,16 @@
     <!-- Preferences -->
     <string name="open_wiki">Open flower in Wikipedia</string>
     <string name="add_history">Add to History</string>
-
+    <string name="helps">Helps</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="suggestion_report">Suggestions / Report Bugs</string>
+    <string name="email">mailto:jennytai3221@gmail.com</string>
+    <string name="about">About</string>
     <string name="about_detail">This app is a high school project by Jenny Tai, which included Android development, neural network and user database. Glad to be of service!</string>
+    <string name="track_development">Track Development</string>
     <string name="github_link">https://github.com/aegerita/Spot-A-Flower</string>
 
-    <string name="take_picture">Take Picture</string>
+    <string name="camera_button">Take Picture</string>
     <string name="logo">Logo</string>
     <string name="gallery">Gallery</string>
     <string name="flower_icon">flower icon</string>
@@ -31,5 +36,5 @@
 
     <string name="open_drawer">open drawer</string>
     <string name="close_drawer">close drawer</string>
-    <string name="tutorial">Tutorial</string>
+
 </resources>

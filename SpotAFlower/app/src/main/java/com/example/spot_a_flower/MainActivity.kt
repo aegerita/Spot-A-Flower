@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.help -> {
                     drawer_layout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, SettingsActivity::class.java)
-                    intent.putExtra("Parent", getString(R.string.helps))
+                    intent.putExtra("Parent", getString(R.string.helpsAbout))
                     startActivity(intent)
                     true
                 }
@@ -181,6 +181,7 @@ class MainActivity : AppCompatActivity() {
         return
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // do nothing if activity cancelled
@@ -210,7 +211,7 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
             //logo.setImageBitmap(imageBitmap)
-            searchFlower()
+            searchFlower(imageBitmap)
 
             // get photo from gallery and pass it to neural network
         } else if (requestCode == requestGalleryPhoto) {
@@ -219,29 +220,14 @@ class MainActivity : AppCompatActivity() {
                 val imageBitmap =
                     MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
                 //logo.setImageURI(selectedImage)
-                searchFlower()
+                searchFlower(imageBitmap)
             } else {
                 Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // TODO call neural network to determine result
-    private fun searchFlower() {
-        if (Math.random() < 1) {
-            searchSuccess()
-        } else
-            searchFailed()
-    }
-
-    // go to failed page
-    private fun searchFailed() {
-        val intent = Intent(this, SearchFailed::class.java)
-        startActivity(intent)
-    }
-
-    // go to success page
-    private fun searchSuccess() {
+    private fun searchFlower(imageBitmap: Bitmap) {
         val intent = Intent(this, FlowerSearch::class.java)
         intent.putExtra("Parent", getString(R.string.search))
         startActivity(intent)

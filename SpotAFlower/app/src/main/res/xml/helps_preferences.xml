@@ -4,7 +4,7 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="Helps">
+        app:title="@string/helps">
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="tutorial"
@@ -13,10 +13,10 @@
 
         <Preference
             app:iconSpaceReserved="false"
-            app:title="Suggestions / Report Bugs">
+            app:title="@string/suggestion_report">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="mailto:jennytai3221@gmail.com">
+                android:data="@string/email">
                 <!--suppress AndroidElementNotAllowed -->
                 <extra
                     android:name="android.intent.extra.SUBJECT"
@@ -29,7 +29,7 @@
     <PreferenceCategory
         app:allowDividerAbove="false"
         app:iconSpaceReserved="false"
-        app:title="About">
+        app:title="@string/about">
         <Preference
             app:iconSpaceReserved="false"
             app:selectable="false"
@@ -37,7 +37,7 @@
 
         <Preference
             app:iconSpaceReserved="false"
-            app:title="Track Development">
+            app:title="@string/track_development">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/github_link" />

@@ -33,9 +33,6 @@
             android:name=".FlowerSearch"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".SearchFailed"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".MainActivity" />
 

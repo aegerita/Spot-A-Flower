@@ -37,7 +37,7 @@ class FlowerSearch : AppCompatActivity() {
         // create flower dataset TODO implement neural network
         myDataset = ArrayList()
         for (i in 1..constant) {
-            // making up variables
+            // making up variables, for now
             val name = names[(Math.random() * names.size).toInt()]
             val detail = if (scenario == getString(R.string.search)) {
                 // show possibility in search result
@@ -59,7 +59,10 @@ class FlowerSearch : AppCompatActivity() {
             // save the flower when search if the user choose so
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             if ((scenario == getString(R.string.search)) // search page
-                && (sharedPreferences.getString("addHistoryWhen", "search") == "search"
+                && (sharedPreferences.getString(
+                    getString(R.string.add_history),
+                    "search"
+                ) == "search"
                         || !sharedPreferences.getBoolean("openWiki", false)) // preference
             ) {
                 // TODO save the flower to history when search
@@ -68,10 +71,10 @@ class FlowerSearch : AppCompatActivity() {
             }
         }
 
-        // if dataset not empty, all use search success
+        // set up user interface
         if (myDataset.size != 0) {
+            // if dataset not empty, all use search success
             setContentView(R.layout.activity_search_success)
-            // call the recycler view
             viewManager = LinearLayoutManager(this)
             viewAdapter = RecyclerViewAdapter(this, myDataset)
 
@@ -111,7 +114,7 @@ class FlowerSearch : AppCompatActivity() {
         return true
     }
 
-    // make a alert dialog when user want to delete history
+    // delete user history
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_history -> {
