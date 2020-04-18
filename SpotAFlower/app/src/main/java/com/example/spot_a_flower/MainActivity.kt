@@ -72,28 +72,28 @@ class MainActivity : AppCompatActivity() {
                 R.id.history -> {
                     drawer_layout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, FlowerSearch::class.java)
-                    intent.putExtra("Parent", "history")
+                    intent.putExtra("Parent", getString(R.string.history))
                     startActivity(intent)
                     true
                 }
                 R.id.saved -> {
                     drawer_layout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, FlowerSearch::class.java)
-                    intent.putExtra("Parent", "saved")
+                    intent.putExtra("Parent", getString(R.string.saved))
                     startActivity(intent)
                     true
                 }
                 R.id.setting -> {
                     drawer_layout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, SettingsActivity::class.java)
-                    intent.putExtra("Parent", "setting")
+                    intent.putExtra("Parent", getString(R.string.setting))
                     startActivity(intent)
                     true
                 }
                 R.id.help -> {
                     drawer_layout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, SettingsActivity::class.java)
-                    intent.putExtra("Parent", "help")
+                    intent.putExtra("Parent", getString(R.string.helps))
                     startActivity(intent)
                     true
                 }
@@ -243,7 +243,7 @@ class MainActivity : AppCompatActivity() {
     // go to success page
     private fun searchSuccess() {
         val intent = Intent(this, FlowerSearch::class.java)
-        intent.putExtra("Parent", "search")
+        intent.putExtra("Parent", getString(R.string.search))
         startActivity(intent)
     }
 

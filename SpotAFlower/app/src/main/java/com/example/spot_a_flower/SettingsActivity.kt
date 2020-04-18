@@ -12,7 +12,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // replace the frame by teh correct fragment
         val preferenceFrag: PreferenceFragmentCompat =
-            if (intent.getStringExtra("Parent") == "setting") {
+            if (intent.getStringExtra("Parent") == getString(R.string.setting)) {
                 SettingsFragment()
             } else {
                 HelpsFragment()
@@ -22,12 +22,7 @@ class SettingsActivity : AppCompatActivity() {
         // set toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title =
-            if (intent.getStringExtra("Parent") == "setting") {
-                getString(R.string.setting)
-            } else {
-                getString(R.string.helps)
-            }
+        supportActionBar?.title = intent.getStringExtra("Parent")
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {

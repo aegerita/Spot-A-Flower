@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
@@ -26,7 +27,6 @@ class FlowerSearch : AppCompatActivity() {
 
         // change flower dataset according to where the user clicked from (saved, history or search)
         val scenario = intent.getStringExtra("Parent")
-        println(scenario)
 
         // replaced the neural network with random number generator, for now
         val constant: Int = if (Math.random() < 0.5) {
@@ -39,7 +39,7 @@ class FlowerSearch : AppCompatActivity() {
         for (i in 1..constant) {
             // making up variables
             val name = names[(Math.random() * names.size).toInt()]
-            val detail = if (scenario == "search") {
+            val detail = if (scenario == getString(R.string.search)) {
                 // show possibility in search result
                 (Math.random() * 100).toInt().toString() + "% Probability"
             } else {
@@ -52,13 +52,13 @@ class FlowerSearch : AppCompatActivity() {
             //val icon = R.drawable.logo
             val description = "                        " + getString(R.string.description)
             val link = "https://en.wikipedia.org/wiki/${name}"
-            val isSaved = if (scenario == "saved") true else Math.random() > 0.5
+            val isSaved = if (scenario == getString(R.string.saved)) true else Math.random() > 0.5
 
             myDataset.add(Flower(name, detail, description, link, isSaved))
 
             // save the flower when search if the user choose so
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            if ((scenario == "search") // search page
+            if ((scenario == getString(R.string.search)) // search page
                 && (sharedPreferences.getString("addHistoryWhen", "search") == "search"
                         || !sharedPreferences.getBoolean("openWiki", false)) // preference
             ) {
@@ -85,12 +85,17 @@ class FlowerSearch : AppCompatActivity() {
             setContentView(R.layout.activity_search_failed)
             findViewById<TextView>(R.id.failText).text =
                 when (scenario) {
-                    "history" -> getString(R.string.fail_history_text)
-                    "saved" -> getString(R.string.fail_save_text)
+                    getString(R.string.history) -> {
+                        findViewById<ImageView>(R.id.failImage).setImageResource(android.R.drawable.ic_menu_myplaces)
+                        getString(R.string.fail_history_text)
+                    }
+                    getString(R.string.saved) -> {
+                        findViewById<ImageView>(R.id.failImage).setImageResource(android.R.drawable.ic_menu_myplaces)
+                        getString(R.string.fail_save_text)
+                    }
                     else -> getString(R.string.fail_search_text)
                 }
         }
-
         // set up toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -101,7 +106,7 @@ class FlowerSearch : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
         menu.findItem(R.id.gallery).isVisible = false
-        if (intent.getStringExtra("Parent") == "history")
+        if (intent.getStringExtra("Parent") == getString(R.string.history))
             menu.findItem(R.id.delete_history).isVisible = true
         return true
     }
@@ -122,9 +127,15 @@ class FlowerSearch : AppCompatActivity() {
                     ) { _, _ ->
                         //TODO delete user history in database
                         println("delete user history in database")
-                        // change the viewAdapter accordingly
-                        myDataset.clear()
-                        viewAdapter.notifyDataSetChanged()
+                        // go back to failing page
+                        setContentView(R.layout.activity_search_failed)
+                        findViewById<ImageView>(R.id.failImage).setImageResource(android.R.drawable.ic_menu_myplaces)
+                        findViewById<TextView>(R.id.failText).text =
+                            getString(R.string.fail_history_text)
+                        // set up toolbar
+                        setSupportActionBar(findViewById(R.id.toolbar))
+                        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                        supportActionBar?.title = getString(R.string.history)
                     }
                     .setNegativeButton(android.R.string.no, null)
                     .show()

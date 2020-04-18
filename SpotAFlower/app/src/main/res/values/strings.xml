@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">Spot-A-Flower</string>
 
-    <!-- Drawer Titles -->
+    <!-- Drawer & Toolbar Titles -->
     <string name="sign_in">Sign in/up</string>
     <string name="history">History</string>
     <string name="saved">Saved</string>
     <string name="setting">Settings</string>
     <string name="helps">Helps &amp; About</string>
+    <string name="search">Spot-A-Flower</string>
 
     <!-- Preference Titles -->
     <string name="configuration_header">App Configuration</string>
@@ -15,19 +16,20 @@
     <string name="open_wiki">Open flower in Wikipedia</string>
     <string name="add_history">Add to History</string>
 
+    <string name="about_detail">This app is a high school project by Jenny Tai, which included Android development, neural network and user database. Glad to be of service!</string>
+    <string name="github_link">https://github.com/aegerita/Spot-A-Flower</string>
+
     <string name="take_picture">Take Picture</string>
     <string name="logo">Logo</string>
-    <string name="fail_search_text">Sorry, search failed</string>
-    <string name="fail_save_text">Save flowers by tapping that star!</string>
-    <string name="fail_history_text">Come out and search some flowers!</string>
     <string name="gallery">Gallery</string>
     <string name="flower_icon">flower icon</string>
     <string name="description"> Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have "lily" in their common name but are not related to true lilies.</string>
 
+    <string name="fail_search_text">Sorry, search failed</string>
+    <string name="fail_save_text">Save flowers by tapping that star!</string>
+    <string name="fail_history_text">Come out and search some flowers!</string>
+
     <string name="open_drawer">open drawer</string>
     <string name="close_drawer">close drawer</string>
     <string name="tutorial">Tutorial</string>
-    <string name="about_detail">This app is a high school project by Jenny Tai, which included Android development, neural network and user database. Glad to be of service!</string>
-    <string name="github_link">https://github.com/aegerita/Spot-A-Flower</string>
-    <string name="search_failed">Searching Failed</string>
 </resources>
