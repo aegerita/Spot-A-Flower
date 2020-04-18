@@ -55,8 +55,8 @@ class MainActivity : AppCompatActivity() {
                 this,
                 findViewById(R.id.drawer_layout),
                 toolbar,
-                R.string.open_wiki,
-                R.string.open_wiki
+                R.string.open_drawer,
+                R.string.close_drawer
             )
         findViewById<DrawerLayout>(R.id.drawer_layout).addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
