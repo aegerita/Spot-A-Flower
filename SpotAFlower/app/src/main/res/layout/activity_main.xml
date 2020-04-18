@@ -28,7 +28,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.85" />
 
                 <ImageView
@@ -56,6 +56,7 @@
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/slide_header"
+            app:itemHorizontalPadding="24dp"
             app:menu="@menu/slide_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

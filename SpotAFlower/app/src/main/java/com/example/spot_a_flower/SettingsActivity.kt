@@ -10,20 +10,34 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.settings, SettingsFragment())
-            .commit()
+        val preferenceFrag: PreferenceFragmentCompat =
+            if (intent.getStringExtra("Parent") == "setting") {
+                SettingsFragment()
+            } else {
+                HelpsFragment()
+            }
+        supportFragmentManager.beginTransaction().replace(R.id.settings, preferenceFrag).commit()
 
         // set toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.setting)
+        supportActionBar?.title =
+            if (intent.getStringExtra("Parent") == "setting") {
+                getString(R.string.setting)
+            } else {
+                getString(R.string.helps)
+            }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            setPreferencesFromResource(R.xml.settings_preferences, rootKey)
+        }
+    }
+
+    class HelpsFragment : PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            setPreferencesFromResource(R.xml.helps_preferences, rootKey)
         }
     }
 }

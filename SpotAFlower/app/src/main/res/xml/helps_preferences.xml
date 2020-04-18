@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Helps">
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="tutorial"
+            app:title="@string/tutorial" />
+
+        <Preference app:title="Suggestions / Report Bugs">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="mailto:jennytai3221@gmail.com">
+                <extra
+                    android:name="android.intent.extra.SUBJECT"
+                    android:value="Spot-A-Flower Feedback" />
+            </intent>
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="About">
+        <Preference app:summary="@string/about_detail" />
+
+        <Preference app:title="Track Development">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/github_link" />
+        </Preference>
+
+    </PreferenceCategory>
+</PreferenceScreen>
