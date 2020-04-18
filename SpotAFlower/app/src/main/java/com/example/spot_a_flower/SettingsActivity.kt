@@ -10,6 +10,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
 
+        // replace the frame by teh correct fragment
         val preferenceFrag: PreferenceFragmentCompat =
             if (intent.getStringExtra("Parent") == "setting") {
                 SettingsFragment()

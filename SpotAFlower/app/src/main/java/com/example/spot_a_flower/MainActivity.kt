@@ -226,9 +226,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // call neural network to determine result
+    // TODO call neural network to determine result
     private fun searchFlower() {
-        if (Math.random() < 0.5) {
+        if (Math.random() < 1) {
             searchSuccess()
         } else
             searchFailed()

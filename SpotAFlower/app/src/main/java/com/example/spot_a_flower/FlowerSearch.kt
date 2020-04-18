@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,40 +23,30 @@ class FlowerSearch : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search_success)
-
-        // my_child_toolbar is defined in the layout file
-        setSupportActionBar(findViewById(R.id.toolbar))
-
-        // Get a support ActionBar corresponding to this toolbar and enable the Up button
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // change flower dataset according to where the user clicked from (saved, history or search)
         val scenario = intent.getStringExtra("Parent")
-        val constant: Int
-        when (intent.getStringExtra("Parent")) {
-            "history" -> {
-                constant = 5
-                supportActionBar?.title = getString(R.string.history)
-            }
-            "saved" -> {
-                constant = 10
-                supportActionBar?.title = getString(R.string.saved)
-            }
-            else -> constant = 15
-        }
+        println(scenario)
+
+        // replaced the neural network with random number generator, for now
+        val constant: Int = if (Math.random() < 0.5) {
+            8
+        } else
+            0
 
         // create flower dataset TODO implement neural network
         myDataset = ArrayList()
         for (i in 1..constant) {
+            // making up variables
             val name = names[(Math.random() * names.size).toInt()]
-
-            val detail = if (scenario == "history" || scenario == "saved") {
+            val detail = if (scenario == "search") {
+                // show possibility in search result
+                (Math.random() * 100).toInt().toString() + "% Probability"
+            } else {
+                // show timestamp in history or save other than search
                 val date = Date((Random().nextDouble() * 60 * 60 * 24 * 365).toLong())
                 val sdf = SimpleDateFormat("hh:mm:ss MM/dd", Locale.CANADA)
                 sdf.format(date)
-            } else {
-                (Math.random() * 100).toInt().toString() + "% Probability"
             }
 
             //val icon = R.drawable.logo
@@ -65,29 +56,48 @@ class FlowerSearch : AppCompatActivity() {
 
             myDataset.add(Flower(name, detail, description, link, isSaved))
 
+            // save the flower when search if the user choose so
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            if ((scenario != "history" && scenario != "saved")
+            if ((scenario == "search") // search page
                 && (sharedPreferences.getString("addHistoryWhen", "search") == "search"
-                        || sharedPreferences.getBoolean("openWiki", false))
+                        || !sharedPreferences.getBoolean("openWiki", false)) // preference
             ) {
                 // TODO save the flower to history when search
+                println(sharedPreferences.getString("addHistoryWhen", "search"))
                 println("save all of these flowers to history")
             }
         }
 
-        // call the recycler view
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = RecyclerViewAdapter(this, myDataset)
+        // if dataset not empty, all use search success
+        if (myDataset.size != 0) {
+            setContentView(R.layout.activity_search_success)
+            // call the recycler view
+            viewManager = LinearLayoutManager(this)
+            viewAdapter = RecyclerViewAdapter(this, myDataset)
 
-        recyclerView = findViewById<RecyclerView>(R.id.flower_list).apply {
-            setHasFixedSize(true)
-            // use a linear layout manager
-            layoutManager = viewManager
-            // specify an viewAdapter (see also next example)
-            adapter = viewAdapter
+            recyclerView = findViewById<RecyclerView>(R.id.flower_list).apply {
+                setHasFixedSize(true)
+                layoutManager = viewManager
+                adapter = viewAdapter
+            }
+        } else {
+            // if dataset empty, all goes to fail page
+            setContentView(R.layout.activity_search_failed)
+            findViewById<TextView>(R.id.failText).text =
+                when (scenario) {
+                    "history" -> getString(R.string.fail_history_text)
+                    "saved" -> getString(R.string.fail_save_text)
+                    else -> getString(R.string.fail_search_text)
+                }
         }
+
+        // set up toolbar
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = scenario
     }
 
+    // add delete history in menu when in history page
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
         menu.findItem(R.id.gallery).isVisible = false
@@ -100,13 +110,13 @@ class FlowerSearch : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_history -> {
+                // alarm dialog, warn the user
                 AlertDialog.Builder(this)
                     .setTitle("Delete History")
                     .setMessage(
                         "Are you sure to delete user history? " +
                                 "Your history can not be restored. "
                     )
-                    // when user confirms, delete history
                     .setPositiveButton(
                         android.R.string.yes
                     ) { _, _ ->
@@ -117,7 +127,6 @@ class FlowerSearch : AppCompatActivity() {
                         viewAdapter.notifyDataSetChanged()
                     }
                     .setNegativeButton(android.R.string.no, null)
-                    //.setIcon(android.R.drawable.ic_dialog_alert)
                     .show()
                 true
             }

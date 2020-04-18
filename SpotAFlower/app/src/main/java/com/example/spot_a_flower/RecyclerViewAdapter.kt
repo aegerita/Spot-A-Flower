@@ -81,7 +81,6 @@ class RecyclerViewAdapter(
         val name: TextView = flowerCard.flower_name
         val detail: TextView = flowerCard.flower_detail
         val description: TextView = flowerCard.flower_description
-
         //val icon: ImageView = flowerCard.flower_icon
         val saveButton: ImageButton = flowerCard.button_save
     }

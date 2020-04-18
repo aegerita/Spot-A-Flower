@@ -13,9 +13,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/failText"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="@string/fail_text"
+        android:gravity="center"
+        android:text="@string/fail_search_text"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +29,7 @@
         android:id="@+id/failImage"
         android:layout_width="128dp"
         android:layout_height="128dp"
-        android:contentDescription="@string/fail_text"
+        android:contentDescription="@string/fail_search_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
