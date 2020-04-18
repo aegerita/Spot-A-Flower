@@ -27,6 +27,4 @@
     <string name="tutorial">Tutorial</string>
     <string name="about_detail">This app is a high school project by Jenny Tai, which included Android development, neural network and user database. Glad to be of service!</string>
     <string name="github_link">https://github.com/aegerita/Spot-A-Flower</string>
-    <string name="version">1.0</string>
-    <string name="title_version">Version</string>
 </resources>

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/configuration_header">
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/configuration_header">
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="openWiki"
+            app:iconSpaceReserved="false"
             app:title="@string/open_wiki" />
 
         <ListPreference
@@ -15,6 +18,7 @@
             app:entryValues="@array/history_setting_values"
             app:key="addHistoryWhen"
             app:title="@string/add_history"
+            app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
