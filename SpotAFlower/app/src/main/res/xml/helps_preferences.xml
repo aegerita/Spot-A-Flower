@@ -13,6 +13,7 @@
 
         <Preference
             app:iconSpaceReserved="false"
+            app:summary="@string/suggest_report_description"
             app:title="@string/suggestion_report">
             <intent
                 android:action="android.intent.action.VIEW"
@@ -27,7 +28,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:allowDividerAbove="false"
         app:iconSpaceReserved="false"
         app:title="@string/about">
         <Preference

@@ -2,7 +2,11 @@ package com.example.spot_a_flower
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate.*
+import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -28,6 +32,31 @@ class SettingsActivity : AppCompatActivity() {
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.settings_preferences, rootKey)
+
+            // changes the theme when the user chooses night mode
+            val theme: Preference? = findPreference("theme")
+            theme!!.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    when (newValue) {
+                        "system" -> setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
+                        "light" -> setDefaultNightMode(MODE_NIGHT_NO)
+                        "night" -> setDefaultNightMode(MODE_NIGHT_YES)
+                    }
+                    true
+                }
+
+            // set the history preference to default when disabled
+            val wiki: Preference? = findPreference("openWiki")
+            wiki!!.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    when (newValue) {
+                        false -> {
+                            val listPref = findPreference<ListPreference>("addHistoryWhen")
+                            listPref!!.value = "search"
+                        }
+                    }
+                    true
+                }
         }
     }
 

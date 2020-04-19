@@ -12,7 +12,7 @@
             app:title="@string/open_wiki" />
 
         <ListPreference
-            app:defaultValue="true"
+            app:defaultValue="search"
             app:dependency="openWiki"
             app:entries="@array/history_setting_entries"
             app:entryValues="@array/history_setting_values"
@@ -20,7 +20,19 @@
             app:title="@string/add_history"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
-
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Theme">
+
+        <ListPreference
+            app:defaultValue="system"
+            app:entries="@array/theme_setting_entries"
+            app:entryValues="@array/theme_setting_values"
+            app:iconSpaceReserved="false"
+            app:key="theme"
+            app:title="Night Mode"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
 </PreferenceScreen>

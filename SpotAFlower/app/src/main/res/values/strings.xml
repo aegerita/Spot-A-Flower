@@ -18,22 +18,26 @@
     <string name="helps">Helps</string>
     <string name="tutorial">Tutorial</string>
     <string name="suggestion_report">Suggestions / Report Bugs</string>
+    <string name="suggest_report_description">Write an email to the developer!</string>
     <string name="email">mailto:jennytai3221@gmail.com</string>
     <string name="about">About</string>
     <string name="about_detail">This app is a high school project by Jenny Tai, which included Android development, neural network and user database. Glad to be of service!</string>
     <string name="track_development">Track Development</string>
     <string name="github_link">https://github.com/aegerita/Spot-A-Flower</string>
 
+    <!-- Buttons -->
     <string name="camera_button">Take Picture</string>
-    <string name="logo">Logo</string>
     <string name="gallery">Gallery</string>
-    <string name="flower_icon">flower icon</string>
-    <string name="description"> Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have "lily" in their common name but are not related to true lilies.</string>
+    <string name="delete_history">Delete</string>
 
+    <!-- Fail Page Description -->
     <string name="fail_search_text">Sorry, search failed</string>
     <string name="fail_save_text">Save flowers by tapping that star!</string>
     <string name="fail_history_text">Come out and search some flowers!</string>
 
+    <string name="logo">Logo</string>
+    <string name="flower_icon">flower icon</string>
+    <string name="description"> Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have "lily" in their common name but are not related to true lilies.</string>
     <string name="open_drawer">open drawer</string>
     <string name="close_drawer">close drawer</string>
 
