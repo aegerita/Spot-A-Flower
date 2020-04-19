@@ -89,11 +89,13 @@ class FlowerSearch : AppCompatActivity() {
             findViewById<TextView>(R.id.failText).text =
                 when (scenario) {
                     getString(R.string.history) -> {
-                        findViewById<ImageView>(R.id.failImage).setImageResource(android.R.drawable.ic_menu_myplaces)
+                        findViewById<ImageView>(R.id.failImage)
+                            .setImageResource(android.R.drawable.ic_menu_myplaces)
                         getString(R.string.fail_history_text)
                     }
                     getString(R.string.saved) -> {
-                        findViewById<ImageView>(R.id.failImage).setImageResource(android.R.drawable.ic_menu_myplaces)
+                        findViewById<ImageView>(R.id.failImage)
+                            .setImageResource(android.R.drawable.ic_menu_myplaces)
                         getString(R.string.fail_save_text)
                     }
                     else -> getString(R.string.fail_search_text)
@@ -132,7 +134,8 @@ class FlowerSearch : AppCompatActivity() {
                         println("delete user history in database")
                         // go back to failing page
                         setContentView(R.layout.activity_search_failed)
-                        findViewById<ImageView>(R.id.failImage).setImageResource(android.R.drawable.ic_menu_myplaces)
+                        findViewById<ImageView>(R.id.failImage)
+                            .setImageResource(android.R.drawable.ic_menu_myplaces)
                         findViewById<TextView>(R.id.failText).text =
                             getString(R.string.fail_history_text)
                         // set up toolbar

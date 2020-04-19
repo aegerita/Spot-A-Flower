@@ -2,4 +2,6 @@
 <resources>
     <color name="colorPrimary">#6BA96D</color>
     <color name="colorPrimaryDark">#009688</color>
+    <color name="colorBackground">@color/cardview_light_background</color>
+    <color name="description">#5F5F5F</color>
 </resources>
