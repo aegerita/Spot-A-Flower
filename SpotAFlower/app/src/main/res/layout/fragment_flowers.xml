@@ -42,7 +42,7 @@
             android:paddingBottom="4dp"
             android:requiresFadingEdge="vertical"
             android:text="@string/description"
-            android:textColor="@color/description" />
+            android:textColor="@color/colorDescription" />
 
     </androidx.cardview.widget.CardView>
 
@@ -62,7 +62,7 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="@color/ic_launcher_background"
+            android:background="@color/colorBackground"
             android:contentDescription="@string/flower_icon"
             app:srcCompat="@drawable/logo" />
     </androidx.cardview.widget.CardView>
@@ -91,7 +91,7 @@
             android:paddingEnd="4dp"
             android:paddingRight="4dp"
             android:textAllCaps="false"
-            android:textColor="@color/ic_launcher_background"
+            android:textColor="@color/colorTitle"
             android:textSize="17sp"
             android:textStyle="bold" />
 
@@ -123,7 +123,7 @@
             android:paddingEnd="12dp"
             android:paddingRight="12dp"
             android:paddingBottom="2dp"
-            android:textColor="@color/ic_launcher_background"
+            android:textColor="@color/colorTitle"
             android:textSize="19sp" />
     </androidx.cardview.widget.CardView>
 

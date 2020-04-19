@@ -27,6 +27,6 @@
         android:paddingTop="8dp"
         android:paddingRight="10dp"
         android:text="@string/app_name"
-        android:textColor="@color/ic_launcher_background" />
+        android:textColor="@color/colorTitle" />
 
 </LinearLayout>
