@@ -6,7 +6,7 @@
         app:iconSpaceReserved="false"
         app:title="@string/helps">
         <SwitchPreferenceCompat
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:key="tutorial"
             app:iconSpaceReserved="false"
             app:title="@string/tutorial" />

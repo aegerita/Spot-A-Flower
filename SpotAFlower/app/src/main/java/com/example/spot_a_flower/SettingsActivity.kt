@@ -49,12 +49,8 @@ class SettingsActivity : AppCompatActivity() {
             val wiki: Preference? = findPreference("openWiki")
             wiki!!.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
-                    when (newValue) {
-                        false -> {
-                            val listPref = findPreference<ListPreference>("addHistoryWhen")
-                            listPref!!.value = "search"
-                        }
-                    }
+                    if (newValue == false)
+                        findPreference<ListPreference>("addHistoryWhen")!!.value = "search"
                     true
                 }
         }
