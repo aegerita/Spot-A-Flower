@@ -9,23 +9,31 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.StrictMode
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.slide_header.view.*
+import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,37 +44,66 @@ class MainActivity : AppCompatActivity() {
     private val permissionRequest = 0
     private val requestImageCapture = 1
     private val requestGalleryPhoto = 2
+    private val signInRequest = 3
     private var storagePermitted = true
+
+    // Firebase instance variables
+    private lateinit var mFirebaseAuth: FirebaseAuth
+    private lateinit var mFirebaseUser: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // declare the button and toolbar for future use
-        val cameraButton = findViewById<Button>(R.id.cameraButton)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        // do this to get internet connection
+        val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
 
-        // add toolbar
+        // Configure Google Sign In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        val mGoogleApiClient = GoogleApiClient.Builder(this)
+            .enableAutoManage(this /* FragmentActivity */, null /* OnConnectionFailedListener */)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+            .build()
+
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance()
+        updateUI()
+
+        // add toolbar and add navigation toggle
         setSupportActionBar(toolbar)
-
-        // add navigation to toolbar by toggle
         val actionBarDrawerToggle =
             ActionBarDrawerToggle(
                 this,
-                findViewById(R.id.drawer_layout),
+                drawer_layout,
                 toolbar,
                 R.string.open_drawer,
                 R.string.close_drawer
             )
-        findViewById<DrawerLayout>(R.id.drawer_layout).addDrawerListener(actionBarDrawerToggle)
+        drawer_layout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 
         // set navigation drawer
-        val navigationView = findViewById<NavigationView>(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener { menuItem ->
+        nav_view.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.account -> {
                     drawer_layout.closeDrawer(GravityCompat.START)
+                    if (mFirebaseAuth.currentUser == null) {
+                        // log in account
+                        val signInIntent =
+                            Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
+                        startActivityForResult(signInIntent, signInRequest)
+                    } else {
+                        // sign out account
+                        mFirebaseAuth.signOut()
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient)
+                        Toast.makeText(this, "Your account is signed out", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    updateUI()
                     true
                 }
                 R.id.history -> {
@@ -189,7 +226,7 @@ class MainActivity : AppCompatActivity() {
             return
 
         // save the photo after it's taken, pass it to the neural network
-        if (requestCode == requestImageCapture) {
+        else if (requestCode == requestImageCapture) {
             // get full size image
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
@@ -224,9 +261,21 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
             }
+
+            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        } else if (requestCode == signInRequest) {
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+            if (result!!.isSuccess) {
+                // Google Sign-In was successful, authenticate with Firebase
+                val account: GoogleSignInAccount = result.signInAccount!!
+                firebaseAuthWithGoogle(account.idToken!!)
+            } else {
+                Toast.makeText(this, "Google Login Failed", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
+    // connect to neural network
     private fun searchFlower(imageBitmap: Bitmap) {
         val intent = Intent(this, FlowerSearch::class.java)
         intent.putExtra("Parent", getString(R.string.search))
@@ -258,6 +307,41 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    // sign in from firebase
+    private fun firebaseAuthWithGoogle(acct: String) {
+        val credential = GoogleAuthProvider.getCredential(acct, null)
+        mFirebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Authentication Successful!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    // change UI depending on the user login or not
+    private fun updateUI() {
+        if (mFirebaseAuth.currentUser != null) {
+            // sign in
+            mFirebaseUser = mFirebaseAuth.currentUser!!
+            nav_view.getHeaderView(0).username.text = mFirebaseUser.displayName
+            if (mFirebaseUser.photoUrl != null) {
+                val profilePicture =
+                    BitmapFactory.decodeStream(
+                        URL(mFirebaseUser.photoUrl.toString()).content as InputStream?
+                    )
+                nav_view.getHeaderView(0).user_profile.setImageBitmap(profilePicture)
+            }
+            nav_view.menu.findItem(R.id.account).title = "Sign out"
+        } else {
+            // sign out
+            nav_view.getHeaderView(0).username.text = getString(R.string.app_name)
+            nav_view.getHeaderView(0).user_profile.setImageResource(R.mipmap.ic_launcher)
+            nav_view.menu.findItem(R.id.account).title = getString(R.string.sign_in)
         }
     }
 
