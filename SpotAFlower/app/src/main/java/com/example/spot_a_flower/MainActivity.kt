@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -93,6 +94,7 @@ class MainActivity : AppCompatActivity() {
                     drawer_layout.closeDrawer(GravityCompat.START)
                     if (mFirebaseAuth.currentUser == null) {
                         // log in account
+                        progressBar.isVisible = true
                         val signInIntent =
                             Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
                         startActivityForResult(signInIntent, signInRequest)
@@ -102,8 +104,8 @@ class MainActivity : AppCompatActivity() {
                         Auth.GoogleSignInApi.signOut(mGoogleApiClient)
                         Toast.makeText(this, "Your account is signed out", Toast.LENGTH_SHORT)
                             .show()
+                        updateUI()
                     }
-                    updateUI()
                     true
                 }
                 R.id.history -> {
@@ -317,6 +319,8 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Authentication Successful!", Toast.LENGTH_SHORT).show()
+                    progressBar.isVisible = false
+                    updateUI()
                 } else {
                     Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
                 }
