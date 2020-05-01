@@ -41,7 +41,6 @@
             android:paddingRight="8dp"
             android:paddingBottom="4dp"
             android:requiresFadingEdge="vertical"
-            android:text="@string/description"
             android:textColor="@color/colorDescription" />
 
     </androidx.cardview.widget.CardView>
@@ -60,6 +59,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/flower_icon"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:background="@color/colorBackground"

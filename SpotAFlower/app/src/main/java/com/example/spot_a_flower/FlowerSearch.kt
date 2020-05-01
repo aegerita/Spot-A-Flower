@@ -38,23 +38,21 @@ class FlowerSearch : AppCompatActivity() {
         myDataset = ArrayList()
         for (i in 1..constant) {
             // making up variables, for now
-            val name = names[(Math.random() * names.size).toInt()]
-            val detail = if (scenario == getString(R.string.search)) {
+            val name: String
+            val detail: String
+            if (scenario == getString(R.string.search)) {
                 // show possibility in search result
-                (Math.random() * 100).toInt().toString() + "% Probability"
+                detail = (Math.random() * 100).toInt().toString() + "% Probability"
+                name = names[(Math.random() * names.size).toInt()]
             } else {
                 // show timestamp in history or save other than search
                 val date = Date((Random().nextDouble() * 60 * 60 * 24 * 365).toLong())
                 val sdf = SimpleDateFormat("hh:mm:ss MM/dd", Locale.CANADA)
-                sdf.format(date)
+                detail = sdf.format(date)
+                name = names[(Math.random() * names.size).toInt()]
             }
 
-            //val icon = R.drawable.logo
-            val description = "                        " + getString(R.string.description)
-            val link = "https://en.wikipedia.org/wiki/${name}"
-            val isSaved = if (scenario == getString(R.string.saved)) true else Math.random() > 0.5
-
-            myDataset.add(Flower(name, detail, description, link, isSaved))
+            myDataset.add(Flower(name, detail))
 
             // save the flower when search if the user choose so
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -151,14 +149,4 @@ class FlowerSearch : AppCompatActivity() {
         }
     }
 
-    // flower class
-    data class Flower(
-        val name: String,
-        val detail: String,
-        val description: String,
-        val link: String,
-        val isSaved: Boolean
-    ) {
-        override fun toString(): String = "$name: $detail\ndescription"
-    }
 }

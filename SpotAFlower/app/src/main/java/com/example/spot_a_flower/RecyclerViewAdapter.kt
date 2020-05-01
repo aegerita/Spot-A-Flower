@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
 class RecyclerViewAdapter(
     private val context: Context,
-    private val Flowers: MutableList<FlowerSearch.Flower>
+    private val Flowers: MutableList<Flower>
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     // Create new views (invoked by the layout manager)
@@ -32,21 +33,33 @@ class RecyclerViewAdapter(
         // - replace the contents of the view with that element
         val flower = Flowers[position]
         holder.name.text = flower.name
+
+        // TODO get these info from flower database
+        holder.description.text =
+            "                         " + "Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have \"lily\" in their common name but are not related to true lilies."
         holder.detail.text = flower.detail
-        holder.description.text = flower.description
+        holder.icon
+        val isSaved = Math.random() > 0.5
 
         // initialize save button
-        if (flower.isSaved) {
+        if (isSaved) {
             holder.saveButton.tag = 1
             holder.saveButton.setImageResource(android.R.drawable.star_on)
-        } else holder.saveButton.tag = 0
+        } else {
+            holder.saveButton.tag = 0
+        }
 
         // only if the user choose to open wiki link. The default is true tho
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         if (sharedPreferences.getBoolean("openWiki", true)) {
             holder.itemView.setOnClickListener {
                 // when the flower is clicked, open link in browser
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(flower.link)))
+                context.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://en.wikipedia.org/wiki/${flower.name}")
+                    )
+                )
                 // if the user choose to save to history when open link
                 if (sharedPreferences.getString("addHistoryWhen", "search") == "link") {
                     // TODO save the flower to history when open wiki link
@@ -81,7 +94,7 @@ class RecyclerViewAdapter(
         val name: TextView = flowerCard.flower_name
         val detail: TextView = flowerCard.flower_detail
         val description: TextView = flowerCard.flower_description
-        //val icon: ImageView = flowerCard.flower_icon
+        val icon: ImageView = flowerCard.flower_icon
         val saveButton: ImageButton = flowerCard.button_save
     }
 }
