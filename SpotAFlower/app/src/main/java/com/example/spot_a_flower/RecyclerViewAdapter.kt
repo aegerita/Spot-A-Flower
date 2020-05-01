@@ -12,6 +12,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
 
@@ -19,6 +23,10 @@ class RecyclerViewAdapter(
     private val context: Context,
     private val Flowers: MutableList<Flower>
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+
+    // Firebase instance variables
+    private var mFirebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var database: DatabaseReference = Firebase.database.reference
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -39,10 +47,9 @@ class RecyclerViewAdapter(
             "                         " + "Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have \"lily\" in their common name but are not related to true lilies."
         holder.detail.text = flower.detail
         holder.icon
-        val isSaved = Math.random() > 0.5
 
         // initialize save button
-        if (isSaved) {
+        if (flower.isSaved) {
             holder.saveButton.tag = 1
             holder.saveButton.setImageResource(android.R.drawable.star_on)
         } else {
@@ -62,8 +69,13 @@ class RecyclerViewAdapter(
                 )
                 // if the user choose to save to history when open link
                 if (sharedPreferences.getString("addHistoryWhen", "search") == "link") {
-                    // TODO save the flower to history when open wiki link
+                    // save the flower to history when open wiki link
                     println("save ${flower.name} to history")
+                    val timestamp = System.currentTimeMillis()
+                    mFirebaseAuth.currentUser?.uid?.let {
+                        database.child("users").child(it).child("history")
+                            .child(flower.name).setValue(timestamp)
+                    }
                 }
             }
         }
@@ -76,12 +88,25 @@ class RecyclerViewAdapter(
                 holder.saveButton.setImageResource(android.R.drawable.star_off)
                 // TODO delete saved flower from user database
                 println("cancel storing " + flower.name)
+                mFirebaseAuth.currentUser?.uid?.let {
+                    database.child("users").child(it).child("saved")
+                        .child(flower.name).removeValue()
+                }
             } else {
                 holder.saveButton.tag = 1
                 holder.saveButton.setImageResource(android.R.drawable.star_on)
-                // TODO store the flower to user database and user history
+                // TODO store the flower to saved database and user history
                 println("store " + flower.name)
+                val timestamp = System.currentTimeMillis()
+                mFirebaseAuth.currentUser?.uid?.let {
+                    database.child("users").child(it).child("history")
+                        .child(flower.name).setValue(timestamp)
+                }
                 println("save ${flower.name} to history")
+                mFirebaseAuth.currentUser?.uid?.let {
+                    database.child("users").child(it).child("saved")
+                        .child(flower.name).setValue(true)
+                }
             }
         }
     }

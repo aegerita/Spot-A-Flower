@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,52 +24,64 @@ class FlowerSearch : AppCompatActivity() {
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var myDataset: MutableList<Flower>
 
+    // Firebase instance variables
+    private lateinit var mFirebaseAuth: FirebaseAuth
+    private lateinit var database: DatabaseReference
+
     private val names = arrayOf("Lily", "Tulip", "Orchids", "Rose", "Poppy", "Sunflowers", "Iris")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // get user database
+        database = Firebase.database.reference
+        mFirebaseAuth = FirebaseAuth.getInstance()
 
         // change flower dataset according to where the user clicked from (saved, history or search)
         val scenario = intent.getStringExtra("Parent")
 
         // replaced the neural network with random number generator, for now
         val constant: Int = if (Math.random() < 0.5) {
-            8
+            3
         } else
             0
 
-        // create flower dataset TODO implement neural network
-        myDataset = ArrayList()
-        for (i in 1..constant) {
-            // making up variables, for now
-            val name: String
-            val detail: String
-            if (scenario == getString(R.string.search)) {
-                // show possibility in search result
-                detail = (Math.random() * 100).toInt().toString() + "% Probability"
-                name = names[(Math.random() * names.size).toInt()]
-            } else {
-                // show timestamp in history or save other than search
-                val date = Date((Random().nextDouble() * 60 * 60 * 24 * 365).toLong())
-                val sdf = SimpleDateFormat("hh:mm:ss MM/dd", Locale.CANADA)
-                detail = sdf.format(date)
-                name = names[(Math.random() * names.size).toInt()]
+        myDataset = ArrayList()// if dataset empty, all goes to fail page
+
+        when (scenario) {
+            getString(R.string.search) -> {
+                for (i in 1..constant) {
+                    // making up variables, for now TODO neural network
+                    val detail: String = (Math.random() * 100).toInt().toString() + "% Probability"
+                    val name: String = names[(Math.random() * names.size).toInt()]
+                    val isSaved = false
+
+                    myDataset.add(Flower(name, detail, isSaved))
+
+                    // save the flower to history when search if the user choose so
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+                    if (sharedPreferences.getString(
+                            getString(R.string.add_history),
+                            "search"
+                        ) == "search"
+                        || !sharedPreferences.getBoolean("openWiki", false)
+                    ) {
+                        val timestamp = System.currentTimeMillis()
+                        mFirebaseAuth.currentUser?.uid?.let {
+                            database.child("users").child(it).child("history")
+                                .child(name).setValue(timestamp)
+                        }
+                    }
+                }
             }
-
-            myDataset.add(Flower(name, detail))
-
-            // save the flower when search if the user choose so
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            if ((scenario == getString(R.string.search)) // search page
-                && (sharedPreferences.getString(
-                    getString(R.string.add_history),
-                    "search"
-                ) == "search"
-                        || !sharedPreferences.getBoolean("openWiki", false)) // preference
-            ) {
-                // TODO save the flower to history when search
-                println(sharedPreferences.getString("addHistoryWhen", "search"))
-                println("save all of these flowers to history")
+            getString(R.string.history) -> {
+                // TODO read history, turn to flower, and add to dataset
+                val date = Date()
+                val sdf = SimpleDateFormat("hh:mm:ss MM/dd", Locale.CANADA)
+                val detail = sdf.format(date)
+            }
+            getString(R.string.saved) -> {
+                // TODO read saved, get info from history, turn to flower, add to dataset
             }
         }
 
@@ -128,8 +144,10 @@ class FlowerSearch : AppCompatActivity() {
                     .setPositiveButton(
                         android.R.string.yes
                     ) { _, _ ->
-                        //TODO delete user history in database
-                        println("delete user history in database")
+                        // delete user history in database
+                        mFirebaseAuth.currentUser?.uid?.let {
+                            database.child("users").child(it).child("history").removeValue()
+                        }
                         // go back to failing page
                         setContentView(R.layout.activity_search_failed)
                         findViewById<ImageView>(R.id.failImage)
