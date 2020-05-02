@@ -20,7 +20,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
@@ -59,7 +58,7 @@ class RecyclerViewAdapter(
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         // initialize and update the  the UI
-                        if (dataSnapshot.exists() && dataSnapshot.getValue<Boolean>()!!) {
+                        if (dataSnapshot.exists()) {
                             holder.saveButton.tag = 1
                             holder.saveButton.setImageResource(android.R.drawable.star_on)
                         } else {
@@ -118,7 +117,7 @@ class RecyclerViewAdapter(
                 println("save ${flower.name} to saved")
                 mFirebaseAuth.currentUser?.uid?.let {
                     database.child("users").child(it).child("saved")
-                        .child(flower.name).setValue(true)
+                        .child(flower.name).setValue(System.currentTimeMillis())
                 }
             }
         }

@@ -113,8 +113,7 @@ class FlowerSearch : AppCompatActivity() {
                                     myDataset.add(
                                         Flower(
                                             flowerSnapshot.key!!,
-                                            dataSnapshot.child("history")
-                                                .child(flowerSnapshot.key!!).value as Long
+                                            flowerSnapshot.value as Long
                                         )
                                     )
                                     viewAdapter.notifyDataSetChanged()
