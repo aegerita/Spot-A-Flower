@@ -3,6 +3,7 @@ package com.example.spot_a_flower
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -67,6 +69,9 @@ class RecyclerViewAdapter(
                     }
 
                     override fun onCancelled(error: DatabaseError) {
+                        Toast.makeText(context, "Error loading user database", Toast.LENGTH_SHORT)
+                            .show()
+                        Log.w("TAG", "loadData:onCancelled", error.toException())
                     }
                 })
         }
@@ -85,12 +90,10 @@ class RecyclerViewAdapter(
                 )
                 // if the user choose to save to history when open link
                 if (sharedPreferences.getString("addHistoryWhen", "search") == "link") {
-                    // save the flower to history when open wiki link
                     println("save ${flower.name} to history")
-                    val timestamp = System.currentTimeMillis()
                     mFirebaseAuth.currentUser?.uid?.let {
                         database.child("users").child(it).child("history")
-                            .child(flower.name).setValue(timestamp)
+                            .child(flower.name).setValue(System.currentTimeMillis())
                     }
                 }
             }
@@ -111,14 +114,8 @@ class RecyclerViewAdapter(
             } else {
                 holder.saveButton.tag = 1
                 holder.saveButton.setImageResource(android.R.drawable.star_on)
-                // store the flower to saved database and user history
-                println("store " + flower.name)
-                val timestamp = System.currentTimeMillis()
-                mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it).child("history")
-                        .child(flower.name).setValue(timestamp)
-                }
-                println("save ${flower.name} to history")
+                // store the flower to saved database
+                println("save ${flower.name} to saved")
                 mFirebaseAuth.currentUser?.uid?.let {
                     database.child("users").child(it).child("saved")
                         .child(flower.name).setValue(true)
