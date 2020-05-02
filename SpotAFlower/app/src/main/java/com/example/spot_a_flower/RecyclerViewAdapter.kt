@@ -13,8 +13,12 @@ import android.widget.TextView
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
@@ -48,13 +52,25 @@ class RecyclerViewAdapter(
         holder.detail.text = flower.detail
         holder.icon
 
-        // initialize save button
-        if (flower.isSaved) {
-            holder.saveButton.tag = 1
-            holder.saveButton.setImageResource(android.R.drawable.star_on)
-        } else {
-            holder.saveButton.tag = 0
+        mFirebaseAuth.currentUser?.uid?.let {
+            database.child("users").child(it).child("saved").child(flower.name)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        // initialize and update the  the UI
+                        if (dataSnapshot.exists() && dataSnapshot.getValue<Boolean>()!!) {
+                            holder.saveButton.tag = 1
+                            holder.saveButton.setImageResource(android.R.drawable.star_on)
+                        } else {
+                            holder.saveButton.tag = 0
+                            holder.saveButton.setImageResource(android.R.drawable.star_off)
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                })
         }
+
 
         // only if the user choose to open wiki link. The default is true tho
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -86,7 +102,7 @@ class RecyclerViewAdapter(
             if (holder.saveButton.tag == 1) {
                 holder.saveButton.tag = 0
                 holder.saveButton.setImageResource(android.R.drawable.star_off)
-                // TODO delete saved flower from user database
+                // delete saved flower from user database
                 println("cancel storing " + flower.name)
                 mFirebaseAuth.currentUser?.uid?.let {
                     database.child("users").child(it).child("saved")
@@ -95,7 +111,7 @@ class RecyclerViewAdapter(
             } else {
                 holder.saveButton.tag = 1
                 holder.saveButton.setImageResource(android.R.drawable.star_on)
-                // TODO store the flower to saved database and user history
+                // store the flower to saved database and user history
                 println("store " + flower.name)
                 val timestamp = System.currentTimeMillis()
                 mFirebaseAuth.currentUser?.uid?.let {

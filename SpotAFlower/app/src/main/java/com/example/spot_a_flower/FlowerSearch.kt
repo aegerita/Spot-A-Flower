@@ -41,7 +41,7 @@ class FlowerSearch : AppCompatActivity() {
         val scenario = intent.getStringExtra("Parent")
 
         // replaced the neural network with random number generator, for now
-        val constant: Int = if (Math.random() < 0.5) {
+        val constant: Int = if (Math.random() < 0.9) {
             3
         } else
             0
@@ -54,9 +54,8 @@ class FlowerSearch : AppCompatActivity() {
                     // making up variables, for now TODO neural network
                     val detail: String = (Math.random() * 100).toInt().toString() + "% Probability"
                     val name: String = names[(Math.random() * names.size).toInt()]
-                    val isSaved = false
 
-                    myDataset.add(Flower(name, detail, isSaved))
+                    myDataset.add(Flower(name, detail))
 
                     // save the flower to history when search if the user choose so
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
