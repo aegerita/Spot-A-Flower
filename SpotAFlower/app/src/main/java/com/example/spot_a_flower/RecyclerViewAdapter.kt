@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -75,7 +74,6 @@ class RecyclerViewAdapter(
                 })
         }
 
-
         // only if the user choose to open wiki link. The default is true tho
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         if (sharedPreferences.getBoolean("openWiki", true)) {
@@ -89,18 +87,14 @@ class RecyclerViewAdapter(
                 )
                 // if the user choose to save to history when open link
                 if (sharedPreferences.getString("addHistoryWhen", "search") == "link") {
-                    println("save ${flower.name} to history")
-                    mFirebaseAuth.currentUser?.uid?.let {
-                        database.child("users").child(it).child("history")
-                            .child(flower.name).setValue(System.currentTimeMillis())
-                    }
+                    saveToHistory(flower)
                 }
             }
         }
 
         // change star and save to database
         holder.saveButton.setOnClickListener {
-            holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
+            //holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
             if (holder.saveButton.tag == 1) {
                 holder.saveButton.tag = 0
                 holder.saveButton.setImageResource(android.R.drawable.star_off)
@@ -114,12 +108,21 @@ class RecyclerViewAdapter(
                 holder.saveButton.tag = 1
                 holder.saveButton.setImageResource(android.R.drawable.star_on)
                 // store the flower to saved database
+                saveToHistory(flower)
                 println("save ${flower.name} to saved")
                 mFirebaseAuth.currentUser?.uid?.let {
                     database.child("users").child(it).child("saved")
                         .child(flower.name).setValue(System.currentTimeMillis())
                 }
             }
+        }
+    }
+
+    private fun saveToHistory(flower: Flower) {
+        println("save ${flower.name} to history")
+        mFirebaseAuth.currentUser?.uid?.let {
+            database.child("users").child(it).child("history")
+                .child(flower.name).setValue(System.currentTimeMillis())
         }
     }
 

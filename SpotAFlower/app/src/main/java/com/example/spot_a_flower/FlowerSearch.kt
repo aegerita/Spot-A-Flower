@@ -41,16 +41,23 @@ class FlowerSearch : AppCompatActivity() {
         database = Firebase.database.reference
         mFirebaseAuth = FirebaseAuth.getInstance()
 
-        // replaced the neural network with random number generator, for now
-        val constant: Int = if (Math.random() < 0.9) {
-            3
-        } else
-            0
+        // set up layout
+        setContentView(R.layout.activity_search_success)
+        recyclerView = findViewById<RecyclerView>(R.id.flower_list).apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
+
+        // set up toolbar
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = intent.getStringExtra("Parent")
 
         // change scenarios depending on parent activity
         when (intent.getStringExtra("Parent")) {
             getString(R.string.search) -> {
-                for (i in 1..constant) {
+                for (i in 1..5) {
                     // making up variables, for now TODO neural network
                     val name: String = names[(Math.random() * names.size).toInt()]
                     myDataset.add(Flower(name, (Math.random() * 100).toInt()))
@@ -66,6 +73,7 @@ class FlowerSearch : AppCompatActivity() {
                     }
                 }
             }
+
             getString(R.string.history) -> {
                 // read history, turn to flower, and add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
@@ -81,14 +89,8 @@ class FlowerSearch : AppCompatActivity() {
                                         )
                                     )
                                     viewAdapter.notifyDataSetChanged()
-                                    // set up ui
-                                    setContentView(R.layout.activity_search_success)
-                                    recyclerView =
-                                        findViewById<RecyclerView>(R.id.flower_list).apply {
-                                            adapter = viewAdapter
-                                        }
-                                    setToolbar()
                                 }
+                                if (myDataset.size == 0) pageEmpty()
                             }
 
                             override fun onCancelled(databaseError: DatabaseError) {
@@ -102,6 +104,7 @@ class FlowerSearch : AppCompatActivity() {
                         })
                 }
             }
+
             getString(R.string.saved) -> {
                 // read saved, get info from history, turn to flower, add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
@@ -117,26 +120,8 @@ class FlowerSearch : AppCompatActivity() {
                                         )
                                     )
                                     viewAdapter.notifyDataSetChanged()
-                                    // set up ui
-                                    setContentView(R.layout.activity_search_success)
-                                    recyclerView =
-                                        findViewById<RecyclerView>(R.id.flower_list).apply {
-                                            adapter = viewAdapter
-                                        }
-                                    setToolbar()
                                 }
-                                if (myDataset.size == 0) {
-                                    // go back to failing page
-                                    setContentView(R.layout.activity_search_failed)
-                                    findViewById<ImageView>(R.id.failImage)
-                                        .setImageResource(android.R.drawable.ic_menu_myplaces)
-                                    findViewById<TextView>(R.id.failText).text =
-                                        getString(R.string.fail_save_text)
-                                    // set up toolbar
-                                    setSupportActionBar(findViewById(R.id.toolbar))
-                                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                                    supportActionBar?.title = getString(R.string.saved)
-                                }
+                                if (myDataset.size == 0) pageEmpty()
                             }
 
                             override fun onCancelled(databaseError: DatabaseError) {
@@ -151,39 +136,26 @@ class FlowerSearch : AppCompatActivity() {
                 }
             }
         }
-
-        // set up user interface
-        if (myDataset.size != 0) {
-            // if dataset not empty, all use search success
-            setContentView(R.layout.activity_search_success)
-
-            recyclerView = findViewById<RecyclerView>(R.id.flower_list).apply {
-                setHasFixedSize(true)
-                layoutManager = viewManager
-                adapter = viewAdapter
-            }
-        } else {
-            // if dataset empty, all goes to fail page
-            setContentView(R.layout.activity_search_failed)
-            findViewById<TextView>(R.id.failText).text =
-                when (intent.getStringExtra("Parent")) {
-                    getString(R.string.history) -> {
-                        findViewById<ImageView>(R.id.failImage)
-                            .setImageResource(android.R.drawable.ic_menu_myplaces)
-                        getString(R.string.fail_history_text)
-                    }
-                    getString(R.string.saved) -> {
-                        findViewById<ImageView>(R.id.failImage)
-                            .setImageResource(android.R.drawable.ic_menu_myplaces)
-                        getString(R.string.fail_save_text)
-                    }
-                    else -> getString(R.string.fail_search_text)
-                }
-        }
-        setToolbar()
     }
 
-    private fun setToolbar() {
+    // if dataset empty, all goes to fail page
+    private fun pageEmpty() {
+        setContentView(R.layout.activity_search_failed)
+        when (intent.getStringExtra("Parent")) {
+            getString(R.string.history) -> {
+                findViewById<ImageView>(R.id.failImage)
+                    .setImageResource(android.R.drawable.ic_menu_myplaces)
+                findViewById<TextView>(R.id.failText).text = getString(R.string.fail_history_text)
+            }
+            getString(R.string.saved) -> {
+                findViewById<ImageView>(R.id.failImage)
+                    .setImageResource(android.R.drawable.ic_menu_myplaces)
+                findViewById<TextView>(R.id.failText).text = getString(R.string.fail_save_text)
+            }
+            else -> {
+                findViewById<TextView>(R.id.failText).text = getString(R.string.fail_search_text)
+            }
+        }
         // set up toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
