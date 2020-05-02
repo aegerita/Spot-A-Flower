@@ -77,19 +77,20 @@ class FlowerSearch : AppCompatActivity() {
             getString(R.string.history) -> {
                 // read history, turn to flower, and add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it).child("history")
+                    database.child("users").child(it).child("history").orderByValue()
                         .addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 myDataset.clear()
                                 for (flowerSnapshot in dataSnapshot.children) {
                                     myDataset.add(
+                                        0,
                                         Flower(
                                             flowerSnapshot.key!!,
                                             flowerSnapshot.value as Long
                                         )
                                     )
-                                    viewAdapter.notifyDataSetChanged()
                                 }
+                                viewAdapter.notifyDataSetChanged()
                                 if (myDataset.size == 0) pageEmpty()
                             }
 
@@ -108,19 +109,20 @@ class FlowerSearch : AppCompatActivity() {
             getString(R.string.saved) -> {
                 // read saved, get info from history, turn to flower, add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it)
+                    database.child("users").child(it).child("saved").orderByValue()
                         .addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 myDataset.clear()
-                                for (flowerSnapshot in dataSnapshot.child("saved").children) {
+                                for (flowerSnapshot in dataSnapshot.children) {
                                     myDataset.add(
+                                        0,
                                         Flower(
                                             flowerSnapshot.key!!,
                                             flowerSnapshot.value as Long
                                         )
                                     )
-                                    viewAdapter.notifyDataSetChanged()
                                 }
+                                viewAdapter.notifyDataSetChanged()
                                 if (myDataset.size == 0) pageEmpty()
                             }
 
