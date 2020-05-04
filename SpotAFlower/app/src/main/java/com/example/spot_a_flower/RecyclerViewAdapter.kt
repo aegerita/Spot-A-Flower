@@ -56,7 +56,7 @@ class RecyclerViewAdapter(
             database.child("users").child(it).child("saved").child(flower.name)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        // initialize and update the  the UI
+                        // initialize and update the UI
                         if (dataSnapshot.exists()) {
                             holder.saveButton.tag = 1
                             holder.saveButton.setImageResource(android.R.drawable.star_on)
@@ -87,7 +87,11 @@ class RecyclerViewAdapter(
                 )
                 // if the user choose to save to history when open link
                 if (sharedPreferences.getString("addHistoryWhen", "search") == "link") {
-                    saveToHistory(flower)
+                    println("save ${flower.name} to history")
+                    mFirebaseAuth.currentUser?.uid?.let {
+                        database.child("users").child(it).child("history")
+                            .child(flower.name).setValue(System.currentTimeMillis())
+                    }
                 }
             }
         }
@@ -96,8 +100,6 @@ class RecyclerViewAdapter(
         holder.saveButton.setOnClickListener {
             //holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
             if (holder.saveButton.tag == 1) {
-                holder.saveButton.tag = 0
-                holder.saveButton.setImageResource(android.R.drawable.star_off)
                 // delete saved flower from user database
                 println("cancel storing " + flower.name)
                 mFirebaseAuth.currentUser?.uid?.let {
@@ -105,24 +107,13 @@ class RecyclerViewAdapter(
                         .child(flower.name).removeValue()
                 }
             } else {
-                holder.saveButton.tag = 1
-                holder.saveButton.setImageResource(android.R.drawable.star_on)
                 // store the flower to saved database
-                saveToHistory(flower)
                 println("save ${flower.name} to saved")
                 mFirebaseAuth.currentUser?.uid?.let {
                     database.child("users").child(it).child("saved")
                         .child(flower.name).setValue(System.currentTimeMillis())
                 }
             }
-        }
-    }
-
-    private fun saveToHistory(flower: Flower) {
-        println("save ${flower.name} to history")
-        mFirebaseAuth.currentUser?.uid?.let {
-            database.child("users").child(it).child("history")
-                .child(flower.name).setValue(System.currentTimeMillis())
         }
     }
 

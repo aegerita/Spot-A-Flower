@@ -65,7 +65,6 @@ class FlowerSearch : AppCompatActivity() {
                     // save the flower to history when search if the user choose so
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
                     if (sharedPreferences.getString("addHistoryWhen", "search") == "search") {
-                        println(sharedPreferences.getString("addHistoryWhen", "wat?"))
                         mFirebaseAuth.currentUser?.uid?.let {
                             database.child("users").child(it).child("history")
                                 .child(name).setValue(System.currentTimeMillis())
@@ -191,16 +190,7 @@ class FlowerSearch : AppCompatActivity() {
                         mFirebaseAuth.currentUser?.uid?.let {
                             database.child("users").child(it).child("history").removeValue()
                         }
-                        // go back to failing page
-                        setContentView(R.layout.activity_search_failed)
-                        findViewById<ImageView>(R.id.failImage)
-                            .setImageResource(android.R.drawable.ic_menu_myplaces)
-                        findViewById<TextView>(R.id.failText).text =
-                            getString(R.string.fail_history_text)
-                        // set up toolbar
-                        setSupportActionBar(findViewById(R.id.toolbar))
-                        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                        supportActionBar?.title = getString(R.string.history)
+                        pageEmpty()
                     }
                     .setNegativeButton(android.R.string.no, null)
                     .show()

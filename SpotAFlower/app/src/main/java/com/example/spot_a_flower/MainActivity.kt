@@ -266,6 +266,7 @@ class MainActivity : AppCompatActivity() {
 
             // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         } else if (requestCode == signInRequest) {
+            progressBar.isVisible = false
             val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
             if (result!!.isSuccess) {
                 // Google Sign-In was successful, authenticate with Firebase
@@ -319,7 +320,6 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Authentication Successful!", Toast.LENGTH_SHORT).show()
-                    progressBar.isVisible = false
                     updateUI()
                 } else {
                     Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
