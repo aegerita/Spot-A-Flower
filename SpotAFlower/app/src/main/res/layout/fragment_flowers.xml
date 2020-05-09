@@ -64,6 +64,7 @@
             android:layout_height="100dp"
             android:background="@color/colorBackground"
             android:contentDescription="@string/flower_icon"
+            android:scaleType="centerCrop"
             app:srcCompat="@drawable/logo" />
     </androidx.cardview.widget.CardView>
 

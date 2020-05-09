@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var currentPhotoPath: String
@@ -189,6 +190,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        val db = FlowerInfoDB(this)
+        db.printAllFlowers()
     }
 
     // if the permission is not granted
@@ -220,7 +224,6 @@ class MainActivity : AppCompatActivity() {
         return
     }
 
-    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // do nothing if activity cancelled

@@ -47,10 +47,10 @@ class RecyclerViewAdapter(
         holder.name.text = flower.name
         holder.detail.text = flower.detail
 
-        // TODO get these info from flower database
-        holder.description.text =
-            "                         " + "Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have \"lily\" in their common name but are not related to true lilies."
-        holder.icon
+
+        val db = FlowerInfoDB(context)
+        holder.description.text = db.getDescription(flower.name)
+        holder.icon.setImageBitmap(db.getIcon(flower.name))
 
         mFirebaseAuth.currentUser?.uid?.let {
             database.child("users").child(it).child("saved").child(flower.name)

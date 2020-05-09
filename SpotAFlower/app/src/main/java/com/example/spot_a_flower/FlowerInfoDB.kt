@@ -10,7 +10,8 @@ import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
 
 
-class FlowerInfoDB(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+class FlowerInfoDB(private val context: Context) :
+    SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
         private const val DB_NAME = "FlowerInfoDB"
@@ -53,25 +54,35 @@ class FlowerInfoDB(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $NAME=?", arrayOf(name))
         cursor.moveToFirst()
-        val icon = cursor.getBlob(cursor.getColumnIndex(ICON))
+        val bitmap = if (cursor.moveToFirst()) {
+            val icon = cursor.getBlob(cursor.getColumnIndex(ICON))
+            BitmapFactory.decodeByteArray(icon, 0, icon.size)
+        } else {
+            BitmapFactory.decodeResource(
+                context.resources,
+                R.drawable.logo
+            )
+        }
         cursor.close()
         db.close()
-        return BitmapFactory.decodeByteArray(icon, 0, icon.size)
+        return bitmap
     }
 
     fun getDescription(name: String): String {
         val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $NAME=?", arrayOf(name))
-        cursor.moveToFirst()
-        val intro = cursor.getString(cursor.getColumnIndex(INTRO))
+        val intro = "                         " + if (cursor.moveToFirst()) {
+            cursor.getString(cursor.getColumnIndex(INTRO))
+        } else {
+            "Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have \"lily\" in their common name but are not related to true lilies."
+        }
         cursor.close()
         db.close()
         return intro
     }
 
-
     fun printAllFlowers() {
-        var allFlower: String = ""
+        var allFlower = ""
         val db = readableDatabase
         val selectALLQuery = "SELECT * FROM $TABLE_NAME"
         val cursor = db.rawQuery(selectALLQuery, null)
