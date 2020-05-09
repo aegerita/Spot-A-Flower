@@ -45,11 +45,11 @@ class RecyclerViewAdapter(
         // - replace the contents of the view with that element
         val flower = Flowers[position]
         holder.name.text = flower.name
+        holder.detail.text = flower.detail
 
         // TODO get these info from flower database
         holder.description.text =
             "                         " + "Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have \"lily\" in their common name but are not related to true lilies."
-        holder.detail.text = flower.detail
         holder.icon
 
         mFirebaseAuth.currentUser?.uid?.let {
