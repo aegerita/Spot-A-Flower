@@ -191,6 +191,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // test database
         val db = FlowerInfoDB(this)
         db.printAllFlowers()
     }

@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream
 
 class FlowerInfoDB(private val context: Context) :
     SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+    // TODO prepopulate the database
 
     companion object {
         private const val DB_NAME = "FlowerInfoDB"

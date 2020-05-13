@@ -47,7 +47,6 @@ class RecyclerViewAdapter(
         holder.name.text = flower.name
         holder.detail.text = flower.detail
 
-
         val db = FlowerInfoDB(context)
         holder.description.text = db.getDescription(flower.name)
         holder.icon.setImageBitmap(db.getIcon(flower.name))
