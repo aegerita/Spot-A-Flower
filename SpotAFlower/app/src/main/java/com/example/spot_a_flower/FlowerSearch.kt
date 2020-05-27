@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_search_success.*
 import java.util.*
 
 
@@ -54,6 +56,11 @@ class FlowerSearch : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = intent.getStringExtra("Parent")
 
+        // if user not signed in and open saved or history, warn
+        if (mFirebaseAuth.currentUser == null && intent.getStringExtra("Parent") != getString(R.string.search)){
+            pageEmpty()
+        } else progressBar2.isVisible = true
+
         // change scenarios depending on parent activity
         when (intent.getStringExtra("Parent")) {
             getString(R.string.search) -> {
@@ -71,6 +78,7 @@ class FlowerSearch : AppCompatActivity() {
                         }
                     }
                 }
+                progressBar2.isVisible = false
             }
 
             getString(R.string.history) -> {
@@ -82,7 +90,7 @@ class FlowerSearch : AppCompatActivity() {
                                 myDataset.clear()
                                 for (flowerSnapshot in dataSnapshot.children) {
                                     myDataset.add(
-                                        0,
+                                        // 0,
                                         Flower(
                                             flowerSnapshot.key!!,
                                             flowerSnapshot.value as Long
@@ -91,6 +99,7 @@ class FlowerSearch : AppCompatActivity() {
                                 }
                                 viewAdapter.notifyDataSetChanged()
                                 if (myDataset.size == 0) pageEmpty()
+                                progressBar2.isVisible = false
                             }
 
                             override fun onCancelled(databaseError: DatabaseError) {
@@ -100,6 +109,7 @@ class FlowerSearch : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 Log.w("TAG", "loadData:onCancelled", databaseError.toException())
+                                progressBar2.isVisible = false
                             }
                         })
                 }
@@ -114,7 +124,7 @@ class FlowerSearch : AppCompatActivity() {
                                 myDataset.clear()
                                 for (flowerSnapshot in dataSnapshot.children) {
                                     myDataset.add(
-                                        0,
+                                        // 0,
                                         Flower(
                                             flowerSnapshot.key!!,
                                             flowerSnapshot.value as Long
@@ -123,6 +133,7 @@ class FlowerSearch : AppCompatActivity() {
                                 }
                                 viewAdapter.notifyDataSetChanged()
                                 if (myDataset.size == 0) pageEmpty()
+                                progressBar2.isVisible = false
                             }
 
                             override fun onCancelled(databaseError: DatabaseError) {
@@ -132,6 +143,7 @@ class FlowerSearch : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 Log.w("TAG", "loadData:onCancelled", databaseError.toException())
+                                progressBar2.isVisible = false
                             }
                         })
                 }
@@ -142,18 +154,16 @@ class FlowerSearch : AppCompatActivity() {
     // if dataset empty, all goes to fail page
     private fun pageEmpty() {
         setContentView(R.layout.activity_search_failed)
-        when (intent.getStringExtra("Parent")) {
-            getString(R.string.history) -> {
-                findViewById<ImageView>(R.id.failImage)
-                    .setImageResource(android.R.drawable.ic_menu_myplaces)
+        if (mFirebaseAuth.currentUser == null){
+            findViewById<TextView>(R.id.failText).text = getString(R.string.fail_no_user)
+        } else when (intent.getStringExtra("Parent")) {
+            getString(R.string.history) ->
                 findViewById<TextView>(R.id.failText).text = getString(R.string.fail_history_text)
-            }
-            getString(R.string.saved) -> {
-                findViewById<ImageView>(R.id.failImage)
-                    .setImageResource(android.R.drawable.ic_menu_myplaces)
+            getString(R.string.saved) ->
                 findViewById<TextView>(R.id.failText).text = getString(R.string.fail_save_text)
-            }
-            else -> {
+            getString(R.string.search) -> {
+                findViewById<ImageView>(R.id.failImage)
+                    .setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
                 findViewById<TextView>(R.id.failText).text = getString(R.string.fail_search_text)
             }
         }

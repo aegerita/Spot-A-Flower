@@ -31,6 +31,7 @@
     <string name="delete_history">Delete</string>
 
     <!-- Fail Page Description -->
+    <string name="fail_no_user">Sign up or login to use this function!</string>
     <string name="fail_search_text">Sorry, search failed</string>
     <string name="fail_save_text">Save flowers by tapping that star!</string>
     <string name="fail_history_text">Come out and search some flowers!</string>

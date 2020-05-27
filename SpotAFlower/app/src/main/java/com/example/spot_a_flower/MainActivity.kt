@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -179,11 +180,13 @@ class MainActivity : AppCompatActivity() {
                     }
                     // Continue only if the File was successfully created
                     photoFile?.also {
+                        Log.w("TAG", "file?")
                         val photoURI: Uri = FileProvider.getUriForFile(
                             this,
                             "com.example.spot_a_flower.fileProvider",
                             it
                         )
+                        Log.w("TAG", "here???")
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         startActivityForResult(takePictureIntent, requestImageCapture)
                     }
@@ -227,12 +230,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        progressBar.isVisible = false
         // do nothing if activity cancelled
         if (resultCode == Activity.RESULT_CANCELED)
             return
 
         // save the photo after it's taken, pass it to the neural network
         else if (requestCode == requestImageCapture) {
+            Log.w("TAG", "!!!! heeeeeee is the camera!")
             // get full size image
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888

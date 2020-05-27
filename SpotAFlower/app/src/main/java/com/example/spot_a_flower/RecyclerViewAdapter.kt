@@ -11,6 +11,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -47,12 +48,15 @@ class RecyclerViewAdapter(
         holder.name.text = flower.name
         holder.detail.text = flower.detail
 
+        // get flower information from DB
         val db = FlowerInfoDB(context)
         holder.description.text = db.getDescription(flower.name)
         holder.icon.setImageBitmap(db.getIcon(flower.name))
 
-        mFirebaseAuth.currentUser?.uid?.let {
-            database.child("users").child(it).child("saved").child(flower.name)
+        //
+        if (mFirebaseAuth.currentUser != null){
+            database.child("users").child(mFirebaseAuth.currentUser!!.uid)
+                .child("saved").child(flower.name)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         // initialize and update the UI
@@ -71,6 +75,8 @@ class RecyclerViewAdapter(
                         Log.w("TAG", "loadData:onCancelled", error.toException())
                     }
                 })
+        } else {
+            holder.saveButton.isVisible = false
         }
 
         // only if the user choose to open wiki link. The default is true tho
