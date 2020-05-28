@@ -177,7 +177,7 @@ class FlowerSearch : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
         menu.findItem(R.id.gallery).isVisible = false
-        if (intent.getStringExtra("Parent") == getString(R.string.history))
+        if (intent.getStringExtra("Parent") == getString(R.string.history) && mFirebaseAuth.currentUser != null)
             menu.findItem(R.id.delete_history).isVisible = true
         return true
     }
