@@ -9,11 +9,16 @@ from tensorflow.python.ops.image_ops_impl import ResizeMethod
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 image_size = 44
-batch_size = 64
+batch_size = 128
+
+# Convert the model.
+converter = tf.lite.TFLiteConverter.from_saved_model('flower_model')
+tflite_model = converter.convert()
+open("flower_model.tflite", "wb").write(tflite_model)
 
 ds_train, ds_validation = tfds.load(
     'oxford_flowers102',
-    split=['train+test', 'validation'],
+    split=['train+test+validation[:50%]', 'validation[-50%:]'],
     shuffle_files=True,
     as_supervised=True,
 )
@@ -70,7 +75,7 @@ model.compile(
 
 history = model.fit(
     ds_train,
-    epochs=300,
+    epochs=125,
     validation_data=ds_validation,
 )
 
@@ -82,26 +87,9 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
-"""
-test_accuracy = tf.keras.metrics.Accuracy()
-for (x, y) in ds_train:
-    # training=False is needed only if there are layers with different
-    # behavior during training versus inference (e.g. Dropout).
-    logits = model(x, training=False)
-    prediction = tf.argmax(logits, axis=1, output_type=tf.int32)
-    test_accuracy(prediction, y)
-
-# print(tf.stack([y, prediction], axis=1))
-print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
-
-if test_accuracy.result() > 0.51:
-    model.save('flower_model')
-    print('saved')
-"""
-
 # Re-evaluate the model
 loss, acc = model.evaluate(ds_validation, verbose=2)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
-if acc > 0.56:
+if acc > 0.6:
     model.save('flower_model')
     print('saved')
