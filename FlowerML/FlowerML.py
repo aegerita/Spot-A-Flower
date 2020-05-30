@@ -4,10 +4,11 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense
+from tensorflow.python.keras.regularizers import l2
 from tensorflow.python.ops.image_ops_impl import ResizeMethod
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-image_size = 32
+image_size = 40
 batch_size = 64
 
 ds_train, ds_test, ds_validation = tfds.load(
@@ -46,16 +47,14 @@ ds_validation = ds_validation.cache()
 ds_validation = ds_validation.prefetch(tf.data.experimental.AUTOTUNE)
 
 model = tf.keras.models.Sequential([
-    Conv2D(32, (2, 2), activation='relu', input_shape=(image_size, image_size, 3)),
+    Conv2D(32, (2, 2), activity_regularizer=l2(0.001), activation='relu', input_shape=(image_size, image_size, 3)),
     MaxPooling2D(2, 2),
-    Dropout(0.35),
-    Conv2D(64, (3, 3), activation='relu'),
+    Dropout(0.5),
+    Conv2D(64, (3, 3), activity_regularizer=l2(0.001), activation='relu'),
     MaxPooling2D(2, 2),
-    Dropout(0.35),
-    Conv2D(64, (3, 3), use_bias=False, strides=2, activation='relu'),
-    Dropout(0.25),
+    Dropout(0.5),
     Flatten(),
-    Dense(512, activation='relu'),
+    Dense(512, activity_regularizer=l2(0.001), activation='relu'),
     Dropout(0.5),
     Dense(112, activation='softmax'),
 ])
@@ -91,16 +90,6 @@ for (x, y) in ds_train:
 
 # print(tf.stack([y, prediction], axis=1))
 print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
-
-"""
-pic = Image.open('zonal_geranium_pink_annual_bhs_18-1.jpg')
-test_pic = pic.resize((image_size, image_size))
-test_pic.show()
-
-tf.fromPixels(test_pic)
-predictions = model(test_pic, training=False)
-print(predictions)
-"""
 
 if test_accuracy.result() > 0.48:
     model.save('flower_model')
