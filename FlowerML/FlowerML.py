@@ -6,7 +6,7 @@ from PIL import Image
 from tensorflow.python.ops.image_ops_impl import ResizeMethod
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-image_size = 128
+image_size = 185
 
 ds_train, ds_test, ds_validation = tfds.load(
     'oxford_flowers102',
@@ -28,7 +28,7 @@ ds_train = ds_train.map(
     normalize_img, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 ds_train = ds_train.cache()
 ds_train = ds_train.shuffle(1000)
-ds_train = ds_train.batch(32)
+ds_train = ds_train.batch(64)
 ds_train = ds_train.prefetch(tf.data.experimental.AUTOTUNE)
 
 ds_test = ds_test.map(
@@ -46,9 +46,10 @@ ds_validation = ds_validation.prefetch(tf.data.experimental.AUTOTUNE)
 
 model = tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=(image_size, image_size, 3)),
-    tf.keras.layers.Dense(512, activation='relu'),
-    tf.keras.layers.Dense(512, activation='relu'),
-    tf.keras.layers.Dense(512, activation='relu'),
+    tf.keras.layers.Dense(1024, activation='relu'),
+    tf.keras.layers.Dense(1024, activation='relu'),
+    tf.keras.layers.Dense(1024, activation='relu'),
+    tf.keras.layers.Dense(1024, activation='relu'),
     tf.keras.layers.Dense(112, activation='softmax')
 ])
 model.compile(
@@ -85,4 +86,5 @@ predictions = model(test_pic, training=False)
 print(predictions)
 """
 
-model.save('flower_model')
+if test_accuracy.result() > 13:
+    model.save('flower_model')
