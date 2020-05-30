@@ -8,7 +8,7 @@ from tensorflow.python.keras.regularizers import l2
 from tensorflow.python.ops.image_ops_impl import ResizeMethod
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-image_size = 40
+image_size = 44
 batch_size = 64
 
 ds_train, ds_test, ds_validation = tfds.load(
@@ -47,15 +47,15 @@ ds_validation = ds_validation.cache()
 ds_validation = ds_validation.prefetch(tf.data.experimental.AUTOTUNE)
 
 model = tf.keras.models.Sequential([
-    Conv2D(32, (2, 2), activity_regularizer=l2(0.001), activation='relu', input_shape=(image_size, image_size, 3)),
+    Conv2D(32, (2, 2), activity_regularizer=l2(0.0013), activation='relu', input_shape=(image_size, image_size, 3)),
     MaxPooling2D(2, 2),
     Dropout(0.5),
     Conv2D(64, (3, 3), activity_regularizer=l2(0.001), activation='relu'),
     MaxPooling2D(2, 2),
     Dropout(0.5),
     Flatten(),
-    Dense(512, activity_regularizer=l2(0.001), activation='relu'),
-    Dropout(0.5),
+    Dense(256, activity_regularizer=l2(0.002), activation='relu'),
+    Dropout(0.6),
     Dense(112, activation='softmax'),
 ])
 model.summary()
@@ -68,7 +68,7 @@ model.compile(
 
 history = model.fit(
     ds_test,
-    epochs=30,
+    epochs=500,
     validation_data=ds_validation,
 )
 
@@ -91,6 +91,6 @@ for (x, y) in ds_train:
 # print(tf.stack([y, prediction], axis=1))
 print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
 
-if test_accuracy.result() > 0.48:
+if test_accuracy.result() > 0.51:
     model.save('flower_model')
     print('saved')
