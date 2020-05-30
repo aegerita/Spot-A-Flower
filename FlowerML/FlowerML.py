@@ -2,11 +2,11 @@ import os
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from PIL import Image
+from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense
 from tensorflow.python.ops.image_ops_impl import ResizeMethod
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-image_size = 185
+image_size = 128
 
 ds_train, ds_test, ds_validation = tfds.load(
     'oxford_flowers102',
@@ -33,25 +33,31 @@ ds_train = ds_train.prefetch(tf.data.experimental.AUTOTUNE)
 
 ds_test = ds_test.map(
     normalize_img, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-ds_test = ds_test.batch(128)
+ds_test = ds_test.batch(64)
 ds_test = ds_test.cache()
 ds_test = ds_test.prefetch(tf.data.experimental.AUTOTUNE)
 
 ds_validation = ds_validation.map(
     normalize_img, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-ds_validation = ds_validation.batch(128)
+ds_validation = ds_validation.batch(64)
 ds_validation = ds_validation.cache()
 ds_validation = ds_validation.prefetch(tf.data.experimental.AUTOTUNE)
 
-
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Flatten(input_shape=(image_size, image_size, 3)),
-    tf.keras.layers.Dense(1024, activation='relu'),
-    tf.keras.layers.Dense(1024, activation='relu'),
-    tf.keras.layers.Dense(1024, activation='relu'),
-    tf.keras.layers.Dense(1024, activation='relu'),
-    tf.keras.layers.Dense(112, activation='softmax')
+    Conv2D(32, (3, 3), activation='relu', input_shape=(image_size, image_size, 3)),
+    MaxPooling2D(2, 2),
+    Dropout(0.2),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D(2, 2),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D(2, 2),
+    Dropout(0.2),
+    Flatten(),
+    Dense(512, activation='relu'),
+    Dense(112, activation='softmax'),
 ])
+model.summary()
+
 model.compile(
     loss='sparse_categorical_crossentropy',
     optimizer=tf.keras.optimizers.Adam(0.001),
@@ -59,14 +65,14 @@ model.compile(
 )
 
 model.fit(
-    ds_train,
-    epochs=30,
-    validation_data=ds_test,
+    ds_test,
+    epochs=10,
+    validation_data=ds_validation,
 )
 
 
 test_accuracy = tf.keras.metrics.Accuracy()
-for (x, y) in ds_validation:
+for (x, y) in ds_train:
     # training=False is needed only if there are layers with different
     # behavior during training versus inference (e.g. Dropout).
     logits = model(x, training=False)
@@ -86,5 +92,6 @@ predictions = model(test_pic, training=False)
 print(predictions)
 """
 
-if test_accuracy.result() > 13:
+if test_accuracy.result() > 0.33:
     model.save('flower_model')
+    print('saved')
