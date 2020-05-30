@@ -11,9 +11,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 image_size = 44
 batch_size = 64
 
-ds_train, ds_test, ds_validation = tfds.load(
+ds_train, ds_validation = tfds.load(
     'oxford_flowers102',
-    split=['train', 'test', 'validation'],
+    split=['train+test', 'validation'],
     shuffle_files=True,
     as_supervised=True,
 )
@@ -34,11 +34,13 @@ ds_train = ds_train.shuffle(1000)
 ds_train = ds_train.batch(batch_size)
 ds_train = ds_train.prefetch(tf.data.experimental.AUTOTUNE)
 
+"""
 ds_test = ds_test.map(
     normalize_img, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 ds_test = ds_test.batch(batch_size)
 ds_test = ds_test.cache()
 ds_test = ds_test.prefetch(tf.data.experimental.AUTOTUNE)
+"""
 
 ds_validation = ds_validation.map(
     normalize_img, num_parallel_calls=tf.data.experimental.AUTOTUNE)
@@ -67,8 +69,8 @@ model.compile(
 )
 
 history = model.fit(
-    ds_test,
-    epochs=500,
+    ds_train,
+    epochs=300,
     validation_data=ds_validation,
 )
 
@@ -80,6 +82,7 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
+"""
 test_accuracy = tf.keras.metrics.Accuracy()
 for (x, y) in ds_train:
     # training=False is needed only if there are layers with different
@@ -92,5 +95,13 @@ for (x, y) in ds_train:
 print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
 
 if test_accuracy.result() > 0.51:
+    model.save('flower_model')
+    print('saved')
+"""
+
+# Re-evaluate the model
+loss, acc = model.evaluate(ds_validation, verbose=2)
+print("Restored model, accuracy: {:5.2f}%".format(100*acc))
+if acc > 0.56:
     model.save('flower_model')
     print('saved')
