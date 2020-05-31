@@ -330,11 +330,11 @@ class MainActivity : AppCompatActivity() {
                 )
                 val myDataset: MutableList<Flower> = ArrayList()
                 for (i in probabilities.indices) {
-                    val label = reader.readLine()
+                    val label = reader.readLine().split(" ").joinToString(" ") { it.capitalize() }
                     myDataset.add(Flower(label, (probabilities[i]*100).toInt()))
                     Log.i("MLKit", label+": "+(probabilities[i]*100).toInt())
                 }
-                myDataset.sort()
+                myDataset.sortDescending()
                 intent.putExtra("flower1_name", myDataset[0].name)
                 intent.putExtra("flower2_name", myDataset[1].name)
                 intent.putExtra("flower3_name", myDataset[2].name)
