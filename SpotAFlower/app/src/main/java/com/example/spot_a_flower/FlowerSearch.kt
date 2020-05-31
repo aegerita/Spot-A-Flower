@@ -90,7 +90,7 @@ class FlowerSearch : AppCompatActivity() {
                                 myDataset.clear()
                                 for (flowerSnapshot in dataSnapshot.children) {
                                     myDataset.add(
-                                        // 0,
+                                        0,
                                         Flower(
                                             flowerSnapshot.key!!,
                                             flowerSnapshot.value as Long
@@ -124,7 +124,7 @@ class FlowerSearch : AppCompatActivity() {
                                 myDataset.clear()
                                 for (flowerSnapshot in dataSnapshot.children) {
                                     myDataset.add(
-                                        // 0,
+                                        0,
                                         Flower(
                                             flowerSnapshot.key!!,
                                             flowerSnapshot.value as Long

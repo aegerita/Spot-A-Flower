@@ -194,7 +194,18 @@ class MainActivity : AppCompatActivity() {
 
         // test database
         val db = FlowerInfoDB(this)
-        db.printAllFlowers()
+        db.clear()
+        var reader = BufferedReader(
+            InputStreamReader(assets.open("flower_labels.txt"))
+        )
+        for (i in 1..102) {
+            val name = reader.readLine()
+            val description = reader.readLine()
+            val inputStream = assets.open("icons/$i.jpg")
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            db.addFlower(name, description, bitmap)
+        }
+        // db.printAllFlowers()
     }
 
     // if the permission is not granted
@@ -330,7 +341,8 @@ class MainActivity : AppCompatActivity() {
                 )
                 val myDataset: MutableList<Flower> = ArrayList()
                 for (i in probabilities.indices) {
-                    val label = reader.readLine().split(" ").joinToString(" ") { it.capitalize() }
+                    val label = reader.readLine()
+                    reader.readLine()
                     myDataset.add(Flower(label, (probabilities[i]*100).toInt()))
                     Log.i("MLKit", label+": "+(probabilities[i]*100).toInt())
                 }
@@ -342,6 +354,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("flower2_detail", myDataset[1].detail)
                 intent.putExtra("flower3_detail", myDataset[2].detail)
 
+                println("hello5")
                 startActivity(intent)
             }
             .addOnFailureListener { e ->
