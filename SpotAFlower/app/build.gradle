@@ -26,6 +26,9 @@ android {
         }
     }
 
+    aaptOptions {
+        noCompress "tflite"
+    }
 }
 
 dependencies {
@@ -46,4 +49,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.firebaseui:firebase-ui-database:6.2.1'
     implementation 'com.google.firebase:firebase-database-ktx:19.3.0'
+    implementation 'com.google.firebase:firebase-ml-model-interpreter:22.0.3'
 }

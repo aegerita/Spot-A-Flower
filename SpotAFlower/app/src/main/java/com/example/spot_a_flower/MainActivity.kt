@@ -6,11 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -28,12 +30,11 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.ml.custom.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.slide_header.view.*
 import kotlinx.android.synthetic.main.toolbar.*
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
@@ -287,7 +288,70 @@ class MainActivity : AppCompatActivity() {
     private fun searchFlower(imageBitmap: Bitmap) {
         val intent = Intent(this, FlowerSearch::class.java)
         intent.putExtra("Parent", getString(R.string.search))
-        startActivity(intent)
+
+        // get image from the main activity
+        val imageSize = 44
+        val bitmap = Bitmap.createScaledBitmap(imageBitmap, imageSize, imageSize, true)
+
+        // load model
+        val localModel = FirebaseCustomLocalModel.Builder()
+            .setAssetFilePath("flower_model.tflite").build()
+        val options = FirebaseModelInterpreterOptions.Builder(localModel).build()
+        val interpreter = FirebaseModelInterpreter.getInstance(options)
+
+        // set input output format
+        val inputOutputOptions = FirebaseModelInputOutputOptions.Builder()
+            .setInputFormat(0, FirebaseModelDataType.FLOAT32, intArrayOf(1, imageSize, imageSize, 3))
+            .setOutputFormat(0, FirebaseModelDataType.FLOAT32, intArrayOf(1, 102)).build()
+
+        // set input to proper format
+        val batchNum = 0
+        val input = Array(1) {Array(imageSize){Array(imageSize){FloatArray(3)}}}
+        for (x in 0 until imageSize-1) {
+            for (y in 0 until imageSize-1) {
+                val pixel = bitmap.getPixel(x, y)
+                // Normalize channel values to [-1.0, 1.0]. This requirement varies by
+                // model. For example, some models might require values to be normalized
+                // to the range [0.0, 1.0] instead.
+                input[batchNum][x][y][0] = (Color.red(pixel) - 127) / 255.0f
+                input[batchNum][x][y][1] = (Color.green(pixel) - 127) / 255.0f
+                input[batchNum][x][y][2] = (Color.blue(pixel) - 127) / 255.0f
+            }
+        }
+
+        // pass in the input
+        val inputs = FirebaseModelInputs.Builder().add(input).build()
+        interpreter!!.run(inputs, inputOutputOptions)
+            .addOnSuccessListener { result ->
+                val output = result.getOutput<Array<FloatArray>>(0)
+                val probabilities = output[0]
+                val reader = BufferedReader(
+                    InputStreamReader(assets.open("flower_labels.txt"))
+                )
+                val myDataset: MutableList<Flower> = ArrayList()
+                for (i in probabilities.indices) {
+                    val label = reader.readLine()
+                    myDataset.add(Flower(label, (probabilities[i]*100).toInt()))
+                    Log.i("MLKit", label+": "+(probabilities[i]*100).toInt())
+                }
+                myDataset.sort()
+                intent.putExtra("flower1_name", myDataset[0].name)
+                intent.putExtra("flower2_name", myDataset[1].name)
+                intent.putExtra("flower3_name", myDataset[2].name)
+                intent.putExtra("flower1_detail", myDataset[0].detail)
+                intent.putExtra("flower2_detail", myDataset[1].detail)
+                intent.putExtra("flower3_detail", myDataset[2].detail)
+
+                startActivity(intent)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    this,
+                    "There is something wrong with the AI, mind trying again?",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.w("TAG", "loadData:onCancelled", e)
+            }
     }
 
     // add menu

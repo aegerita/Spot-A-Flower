@@ -64,17 +64,17 @@ class FlowerSearch : AppCompatActivity() {
         // change scenarios depending on parent activity
         when (intent.getStringExtra("Parent")) {
             getString(R.string.search) -> {
-                for (i in 1..5) {
-                    // making up variables, for now TODO neural network
-                    val name: String = names[(Math.random() * names.size).toInt()]
-                    myDataset.add(Flower(name, (Math.random() * 100).toInt()))
+                myDataset.add(Flower(intent.getStringExtra("flower1_name"), intent.getStringExtra("flower1_detail")))
+                myDataset.add(Flower(intent.getStringExtra("flower2_name"), intent.getStringExtra("flower2_detail")))
+                myDataset.add(Flower(intent.getStringExtra("flower3_name"), intent.getStringExtra("flower3_detail")))
 
-                    // save the flower to history when search if the user choose so
-                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-                    if (sharedPreferences.getString("addHistoryWhen", "search") == "search") {
-                        mFirebaseAuth.currentUser?.uid?.let {
+                // save the flower to history when search if the user choose so
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+                if (sharedPreferences.getString("addHistoryWhen", "search") == "search") {
+                    mFirebaseAuth.currentUser?.uid?.let {
+                        for (flower in myDataset){
                             database.child("users").child(it).child("history")
-                                .child(name).setValue(System.currentTimeMillis())
+                                .child(flower.name).setValue(System.currentTimeMillis())
                         }
                     }
                 }
