@@ -8,7 +8,7 @@ from tensorflow.python.keras.layers.preprocessing.image_preprocessing import Res
 from tensorflow.python.keras.regularizers import l2
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-image_size = 128
+image_size = 44
 batch_size = 128
 
 # Convert the model.
@@ -54,7 +54,7 @@ ds_validation = ds_validation.cache()
 ds_validation = ds_validation.prefetch(tf.data.experimental.AUTOTUNE)
 
 model = tf.keras.models.Sequential([
-    Conv2D(32, (5, 5), activity_regularizer=l2(0.0013), activation='relu', input_shape=(image_size, image_size, 3)),
+    Conv2D(32, (2, 2), activity_regularizer=l2(0.0013), activation='relu', input_shape=(image_size, image_size, 3)),
     MaxPooling2D(2, 2),
     Dropout(0.5),
     Conv2D(64, (3, 3), activity_regularizer=l2(0.0015), activation='relu'),
@@ -63,7 +63,7 @@ model = tf.keras.models.Sequential([
     Flatten(),
     Dense(256, activity_regularizer=l2(0.002), activation='relu'),
     Dropout(0.6),
-    Dense(102, activation='sigmoid'),
+    Dense(102, activation='softmax'),
 ])
 model.summary()
 
@@ -75,7 +75,7 @@ model.compile(
 
 history = model.fit(
     ds_train,
-    epochs=300,
+    epochs=200,
     validation_data=ds_validation,
 )
 

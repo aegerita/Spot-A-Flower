@@ -72,10 +72,8 @@ class FlowerSearch : AppCompatActivity() {
                 val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
                 if (sharedPreferences.getString("addHistoryWhen", "search") == "search") {
                     mFirebaseAuth.currentUser?.uid?.let {
-                        for (flower in myDataset){
-                            database.child("users").child(it).child("history")
-                                .child(flower.name).setValue(System.currentTimeMillis())
-                        }
+                        database.child("users").child(it).child("history")
+                            .child(myDataset[0].name).setValue(System.currentTimeMillis())
                     }
                 }
                 progressBar2.isVisible = false

@@ -7,12 +7,13 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
+import java.io.InputStreamReader
 
 
 class FlowerInfoDB(private val context: Context) :
     SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
-    // TODO prepopulate the database
 
     companion object {
         private const val DB_NAME = "FlowerInfoDB"
@@ -28,6 +29,19 @@ class FlowerInfoDB(private val context: Context) :
         val CREATE_TABLE = "CREATE TABLE $TABLE_NAME " +
                 "($ID Integer PRIMARY KEY, $NAME TEXT, $INTRO TEXT, $ICON BLOB)"
         db.execSQL(CREATE_TABLE)
+
+        // prepopulate the database
+        val reader = BufferedReader(
+            InputStreamReader(context.assets.open("flower_labels.txt"))
+        )
+        for (i in 1..102) {
+            val name = reader.readLine()
+            val description = reader.readLine()
+            val inputStream = context.assets.open("icons/$i.jpg")
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            addFlower(name, description, bitmap, db)
+        }
+        //printAllFlowers(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -36,19 +50,17 @@ class FlowerInfoDB(private val context: Context) :
     }
 
     //Inserting (Creating) data
-    fun addFlower(name: String, description: String, bitmap: Bitmap) {
+    private fun addFlower(name: String, description: String, bitmap: Bitmap, db: SQLiteDatabase) {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
         val image = stream.toByteArray()
 
-        val db = this.writableDatabase
         val values = ContentValues().apply {
             put(NAME, name)
             put(INTRO, description)
             put(ICON, image)
         }
         db.insert(TABLE_NAME, null, values)
-        db.close()
     }
 
     fun getIcon(name: String): Bitmap {
@@ -82,9 +94,8 @@ class FlowerInfoDB(private val context: Context) :
         return intro
     }
 
-    fun printAllFlowers() {
+    private fun printAllFlowers(db: SQLiteDatabase) {
         var allFlower = ""
-        val db = readableDatabase
         val selectALLQuery = "SELECT * FROM $TABLE_NAME"
         val cursor = db.rawQuery(selectALLQuery, null)
         if (cursor != null) {
@@ -99,7 +110,6 @@ class FlowerInfoDB(private val context: Context) :
             }
         }
         cursor.close()
-        db.close()
         println(allFlower)
     }
 
