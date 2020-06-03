@@ -3,6 +3,8 @@ package com.example.spot_a_flower
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.text.Layout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +49,10 @@ class RecyclerViewAdapter(
         val flower = Flowers[position]
         holder.name.text = flower.name
         holder.detail.text = flower.detail
+        // justify teh text alignment if it allows
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            holder.detail.justificationMode = Layout.JUSTIFICATION_MODE_INTER_WORD
+        }
 
         // get flower information from DB
         val db = FlowerInfoDB(context)
@@ -87,7 +93,7 @@ class RecyclerViewAdapter(
                 context.startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse("https://en.wikipedia.org/wiki/${flower.name}")
+                        Uri.parse(db.getWikiLink(flower.name))
                     )
                 )
                 // if the user choose to save to history when open link

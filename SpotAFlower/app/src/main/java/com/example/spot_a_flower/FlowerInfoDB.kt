@@ -23,11 +23,12 @@ class FlowerInfoDB(private val context: Context) :
         private const val NAME = "name"
         private const val INTRO = "intro"
         private const val ICON = "icon"
+        private const val WIKI = "link"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         val CREATE_TABLE = "CREATE TABLE $TABLE_NAME " +
-                "($ID Integer PRIMARY KEY, $NAME TEXT, $INTRO TEXT, $ICON BLOB)"
+                "($ID Integer PRIMARY KEY, $NAME TEXT, $INTRO TEXT, $WIKI TEXT, $ICON BLOB)"
         db.execSQL(CREATE_TABLE)
 
         // prepopulate the database
@@ -37,9 +38,10 @@ class FlowerInfoDB(private val context: Context) :
         for (i in 1..102) {
             val name = reader.readLine()
             val description = reader.readLine()
+            val link = reader.readLine()
             val inputStream = context.assets.open("icons/$i.jpg")
             val bitmap = BitmapFactory.decodeStream(inputStream)
-            addFlower(name, description, bitmap, db)
+            addFlower(name, description, link, bitmap, db)
         }
         //printAllFlowers(db)
     }
@@ -50,7 +52,7 @@ class FlowerInfoDB(private val context: Context) :
     }
 
     //Inserting (Creating) data
-    private fun addFlower(name: String, description: String, bitmap: Bitmap, db: SQLiteDatabase) {
+    private fun addFlower(name: String, description: String, link: String, bitmap: Bitmap, db: SQLiteDatabase) {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
         val image = stream.toByteArray()
@@ -58,6 +60,7 @@ class FlowerInfoDB(private val context: Context) :
         val values = ContentValues().apply {
             put(NAME, name)
             put(INTRO, description)
+            put(WIKI, link)
             put(ICON, image)
         }
         db.insert(TABLE_NAME, null, values)
@@ -86,12 +89,22 @@ class FlowerInfoDB(private val context: Context) :
         val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $NAME=?", arrayOf(name))
         val intro = "                         " + if (cursor.moveToFirst()) {
             cursor.getString(cursor.getColumnIndex(INTRO))
-        } else {
+        } else
             "Lily (members of which are true lilies) is a genus of herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies are a group of flowering plants which are important in culture and literature in much of the world. Most species are native to the temperate northern hemisphere, though their range extends into the northern subtropics. Many other plants have \"lily\" in their common name but are not related to true lilies."
-        }
         cursor.close()
         db.close()
         return intro
+    }
+
+    fun getWikiLink(name: String): String {
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $NAME=?", arrayOf(name))
+        val link = if (cursor.moveToFirst()) {
+            cursor.getString(cursor.getColumnIndex(WIKI))
+        } else "https://en.wikipedia.org/wiki/$name"
+        cursor.close()
+        db.close()
+        return link
     }
 
     private fun printAllFlowers(db: SQLiteDatabase) {
@@ -104,8 +117,9 @@ class FlowerInfoDB(private val context: Context) :
                     val id = cursor.getString(cursor.getColumnIndex(ID))
                     val name = cursor.getString(cursor.getColumnIndex(NAME))
                     val description = cursor.getString(cursor.getColumnIndex(INTRO))
+                    val link = cursor.getString(cursor.getColumnIndex(INTRO))
                     val icon = cursor.getBlob(cursor.getColumnIndex(ICON))
-                    allFlower = "$allFlower\n$id $name $icon $description"
+                    allFlower = "$allFlower\n$id $name $icon $link $description"
                 } while (cursor.moveToNext())
             }
         }

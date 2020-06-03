@@ -328,6 +328,7 @@ class MainActivity : AppCompatActivity() {
                 for (i in probabilities.indices) {
                     val label = reader.readLine()
                     reader.readLine()
+                    reader.readLine()
                     myDataset.add(Flower(label, (probabilities[i]*100).toInt()))
                     Log.i("MLKit", label+": "+(probabilities[i]*100).toInt())
                 }
