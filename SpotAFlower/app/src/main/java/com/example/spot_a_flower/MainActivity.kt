@@ -225,8 +225,21 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         progressBar.isVisible = false
+
         // do nothing if activity cancelled
-        if (resultCode == Activity.RESULT_CANCELED)
+        if (requestCode == signInRequest) {
+            progressBar.isVisible = false
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+            if (result!!.isSuccess) {
+                // Google Sign-In was successful, authenticate with Firebase
+                val account: GoogleSignInAccount = result.signInAccount!!
+                print(mFirebaseAuth.currentUser.toString())
+                firebaseAuthWithGoogle(account.idToken!!)
+            } else {
+                Toast.makeText(this, "Google Login Failed, check internet!", Toast.LENGTH_SHORT).show()
+            }
+
+        } else if (resultCode == Activity.RESULT_CANCELED)
             return
 
         // save the photo after it's taken, pass it to the neural network
@@ -267,16 +280,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        } else if (requestCode == signInRequest) {
-            progressBar.isVisible = false
-            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
-            if (result!!.isSuccess) {
-                // Google Sign-In was successful, authenticate with Firebase
-                val account: GoogleSignInAccount = result.signInAccount!!
-                firebaseAuthWithGoogle(account.idToken!!)
-            } else {
-                Toast.makeText(this, "Google Login Failed", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
