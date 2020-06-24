@@ -289,7 +289,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("Parent", getString(R.string.search))
 
         // get image from the main activity
-        val imageSize = 44
+        val imageSize = 224
         val bitmap = Bitmap.createScaledBitmap(imageBitmap, imageSize, imageSize, true)
 
         // load model
