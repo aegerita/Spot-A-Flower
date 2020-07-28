@@ -34,8 +34,6 @@ class FlowerSearch : AppCompatActivity() {
     private lateinit var mFirebaseAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
-    private val names = arrayOf("Lily", "Tulip", "Orchids", "Rose", "Poppy", "Sunflowers", "Iris")
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,7 +55,9 @@ class FlowerSearch : AppCompatActivity() {
         supportActionBar?.title = intent.getStringExtra("Parent")
 
         // if user not signed in and open saved or history, warn
-        if (mFirebaseAuth.currentUser == null && intent.getStringExtra("Parent") != getString(R.string.search)){
+        if (mFirebaseAuth.currentUser == null && (intent.getStringExtra("Parent") == getString(R.string.saved)
+                    || intent.getStringExtra("Parent") == getString(R.string.history))
+        ) {
             pageEmpty()
         } else progressBar2.isVisible = true
 
@@ -146,24 +146,35 @@ class FlowerSearch : AppCompatActivity() {
                         })
                 }
             }
+            getString(R.string.encyclopedia) -> {
+                // add all flowers to the dataset
+                val db = FlowerInfoDB(this)
+                for (Flower in db.getAllFlowers()) {
+                    myDataset.add(Flower)
+                }
+                if (myDataset.size == 0) pageEmpty()
+                progressBar2.isVisible = false
+            }
         }
     }
 
     // if dataset empty, all goes to fail page
     private fun pageEmpty() {
         setContentView(R.layout.activity_search_failed)
-        if (mFirebaseAuth.currentUser == null){
-            findViewById<TextView>(R.id.failText).text = getString(R.string.fail_no_user)
-        } else when (intent.getStringExtra("Parent")) {
+        findViewById<TextView>(R.id.failText).text = when (intent.getStringExtra("Parent")) {
             getString(R.string.history) ->
-                findViewById<TextView>(R.id.failText).text = getString(R.string.fail_history_text)
+                if (mFirebaseAuth.currentUser == null) getString(R.string.fail_no_user)
+                else getString(R.string.fail_history_text)
             getString(R.string.saved) ->
-                findViewById<TextView>(R.id.failText).text = getString(R.string.fail_save_text)
+                if (mFirebaseAuth.currentUser == null) getString(R.string.fail_no_user)
+                else getString(R.string.fail_save_text)
             getString(R.string.search) -> {
                 findViewById<ImageView>(R.id.failImage)
                     .setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
-                findViewById<TextView>(R.id.failText).text = getString(R.string.fail_search_text)
+                getString(R.string.fail_search_text)
             }
+            getString(R.string.encyclopedia) -> getString(R.string.fail_no_database)
+            else -> getString(R.string.fail_no_database)
         }
         // set up toolbar
         setSupportActionBar(findViewById(R.id.toolbar))

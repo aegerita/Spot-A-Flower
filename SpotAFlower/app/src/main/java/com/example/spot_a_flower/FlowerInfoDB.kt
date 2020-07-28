@@ -51,7 +51,7 @@ class FlowerInfoDB(private val context: Context) :
         onCreate(db)
     }
 
-    //Inserting (Creating) data
+    // Inserting (Creating) data
     private fun addFlower(name: String, description: String, link: String, bitmap: Bitmap, db: SQLiteDatabase) {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
@@ -107,6 +107,24 @@ class FlowerInfoDB(private val context: Context) :
         return link
     }
 
+    fun getAllFlowers(): MutableList<Flower> {
+        val myDataset: MutableList<Flower> = ArrayList()
+        val db = this.readableDatabase
+        val selectALLQuery = "SELECT * FROM $TABLE_NAME"
+        val cursor = db.rawQuery(selectALLQuery, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    val id = cursor.getString(cursor.getColumnIndex(ID))
+                    val name = cursor.getString(cursor.getColumnIndex(NAME))
+                    myDataset.add(Flower(name, "ID: $id"))
+                } while (cursor.moveToNext())
+            }
+        }
+        cursor.close()
+        return myDataset
+    }
+    
     private fun printAllFlowers(db: SQLiteDatabase) {
         var allFlower = ""
         val selectALLQuery = "SELECT * FROM $TABLE_NAME"

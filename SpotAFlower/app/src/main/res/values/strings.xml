@@ -8,6 +8,7 @@
     <string name="setting">Settings</string>
     <string name="helpsAbout">Helps &amp; About</string>
     <string name="search">Spot-A-Flower</string>
+    <string name="encyclopedia">Encyclopedia</string>
 
     <!-- Preference Titles -->
     <string name="configuration_header">App Configuration</string>
@@ -35,6 +36,7 @@
     <string name="fail_search_text">Sorry, search failed</string>
     <string name="fail_save_text">Save flowers by tapping that star!</string>
     <string name="fail_history_text">Come out and search some flowers!</string>
+    <string name="fail_no_database">Error connecting to the database. Sorry!</string>
 
     <string name="logo">Logo</string>
     <string name="flower_icon">flower icon</string>

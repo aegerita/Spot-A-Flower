@@ -278,8 +278,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
             }
-
-            // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         }
     }
 
@@ -358,6 +356,7 @@ class MainActivity : AppCompatActivity() {
     // add menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
+        menu.findItem(R.id.encyclopedia).isVisible = true
         return true
     }
 
@@ -377,6 +376,12 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                true
+            }
+            R.id.encyclopedia -> {
+                val intent = Intent(this, FlowerSearch::class.java)
+                intent.putExtra("Parent", getString(R.string.encyclopedia))
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
