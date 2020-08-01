@@ -25,10 +25,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_flowers.view.*
 
-
 class RecyclerViewAdapter(
     private val context: Context,
-    private val Flowers: MutableList<Flower>
+    private val Flowers: MutableList<Flower>,
+    private val intent: String?
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     // Firebase instance variables
@@ -59,7 +59,7 @@ class RecyclerViewAdapter(
         holder.description.text = db.getDescription(flower.name)
         holder.icon.setImageBitmap(db.getIcon(flower.name))
 
-        //
+        // save button status
         if (mFirebaseAuth.currentUser != null){
             database.child("users").child(mFirebaseAuth.currentUser!!.uid)
                 .child("saved").child(flower.name)
@@ -126,6 +126,19 @@ class RecyclerViewAdapter(
                 }
             }
         }
+
+        // show and use the delete button in history
+        if (intent == context.getString(R.string.history)) {
+            holder.deleteButton.isVisible = true
+            holder.deleteButton.setOnClickListener {
+                // delete saved flower from user database
+                println("cancel history of " + flower.name)
+                mFirebaseAuth.currentUser?.uid?.let {
+                    database.child("users").child(it).child("history")
+                        .child(flower.name).removeValue()
+                }
+            }
+        }
     }
 
     // Return the size of your data set (invoked by the layout manager)
@@ -138,5 +151,6 @@ class RecyclerViewAdapter(
         val description: TextView = flowerCard.flower_description
         val icon: ImageView = flowerCard.flower_icon
         val saveButton: ImageButton = flowerCard.button_save
+        val deleteButton: ImageButton = flowerCard.button_delete
     }
 }

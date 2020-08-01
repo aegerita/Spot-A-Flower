@@ -1,6 +1,7 @@
 package com.example.spot_a_flower
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.preference.ListPreference
@@ -59,6 +60,18 @@ class SettingsActivity : AppCompatActivity() {
     class HelpsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.helps_preferences, rootKey)
+            // TODO tutorial
+            val tutorial: Preference? = findPreference("tutorial")
+            tutorial!!.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    if (newValue == true)
+                        Toast.makeText(
+                            context,
+                            "Tutorial is currently under development",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    true
+                }
         }
     }
 }

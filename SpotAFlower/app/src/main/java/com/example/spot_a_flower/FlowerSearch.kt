@@ -28,7 +28,7 @@ class FlowerSearch : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private var myDataset: MutableList<Flower> = ArrayList()
     private var viewManager = LinearLayoutManager(this)
-    private var viewAdapter = RecyclerViewAdapter(this, myDataset)
+    private lateinit var viewAdapter: RecyclerViewAdapter
 
     // Firebase instance variables
     private lateinit var mFirebaseAuth: FirebaseAuth
@@ -43,6 +43,7 @@ class FlowerSearch : AppCompatActivity() {
 
         // set up layout
         setContentView(R.layout.activity_search_success)
+        viewAdapter = RecyclerViewAdapter(this, myDataset, intent.getStringExtra("Parent"))
         recyclerView = findViewById<RecyclerView>(R.id.flower_list).apply {
             setHasFixedSize(true)
             layoutManager = viewManager
@@ -61,6 +62,7 @@ class FlowerSearch : AppCompatActivity() {
             pageEmpty()
         } else progressBar2.isVisible = true
 
+        // TODO sorting
         // change scenarios depending on parent activity
         when (intent.getStringExtra("Parent")) {
             getString(R.string.search) -> {
@@ -146,6 +148,7 @@ class FlowerSearch : AppCompatActivity() {
                         })
                 }
             }
+
             getString(R.string.encyclopedia) -> {
                 // add all flowers to the dataset
                 val db = FlowerInfoDB(this)
