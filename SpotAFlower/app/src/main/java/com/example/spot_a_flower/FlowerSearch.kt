@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -61,6 +65,18 @@ class FlowerSearch : AppCompatActivity() {
         ) {
             pageEmpty()
         } else progressBar2.isVisible = true
+
+        // for the search bar thingy
+        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewAdapter.filter.filter(newText)
+                return false
+            }
+        })
 
         // TODO sorting
         // change scenarios depending on parent activity
@@ -156,7 +172,49 @@ class FlowerSearch : AppCompatActivity() {
                     myDataset.add(Flower)
                 }
                 if (myDataset.size == 0) pageEmpty()
+                myDataset.sortBy { it.name }
                 progressBar2.isVisible = false
+
+                // modify search bar
+                val searchIcon = searchBar.findViewById<ImageView>(R.id.search_mag_icon)
+                searchIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorTitle))
+                val cancelIcon = searchBar.findViewById<ImageView>(R.id.search_close_btn)
+                cancelIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorTitle))
+                val textView = searchBar.findViewById<TextView>(R.id.search_src_text)
+                textView.setTextColor(ContextCompat.getColor(this, R.color.colorTitle))
+
+                searchBar.isVisible = true
+                val params = flower_list.layoutParams as ViewGroup.MarginLayoutParams
+                params.topMargin = 270
+                flower_list.layoutParams = params
+
+                // visible when scroll down, invisible when scroll up
+                var rememberedPosition = viewManager.findFirstVisibleItemPosition()
+                recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(
+                        recyclerView: RecyclerView,
+                        newState: Int
+                    ) {
+                        if (newState != SCROLL_STATE_IDLE) {
+                            val currentFirstVisible: Int =
+                                viewManager.findFirstVisibleItemPosition()
+                            if (currentFirstVisible > rememberedPosition) {
+                                searchBar.isVisible = false
+                                val newParams =
+                                    flower_list.layoutParams as ViewGroup.MarginLayoutParams
+                                newParams.topMargin = 144
+                                flower_list.layoutParams = newParams
+                            } else {
+                                searchBar.isVisible = true
+                                val newParams =
+                                    flower_list.layoutParams as ViewGroup.MarginLayoutParams
+                                newParams.topMargin = 270
+                                flower_list.layoutParams = newParams
+                            }
+                            rememberedPosition = currentFirstVisible
+                        }
+                    }
+                })
             }
         }
     }

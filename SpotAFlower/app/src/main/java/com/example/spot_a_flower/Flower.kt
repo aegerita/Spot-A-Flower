@@ -3,7 +3,7 @@ package com.example.spot_a_flower
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Flower : Comparable<Flower> {
+class Flower {
     var name: String
     var detail: String
     var int: Int
@@ -25,9 +25,5 @@ class Flower : Comparable<Flower> {
         this.name = name
         this.detail = "$probability% Probability"
         this.int = probability
-    }
-
-    override fun compareTo(other: Flower): Int {
-        return int - other.int
     }
 }

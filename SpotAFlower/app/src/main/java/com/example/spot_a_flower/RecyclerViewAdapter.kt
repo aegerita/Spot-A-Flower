@@ -9,10 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,16 +21,22 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_flowers.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
+// TODO filter flowers
 class RecyclerViewAdapter(
     private val context: Context,
-    private val Flowers: MutableList<Flower>,
+    private val flowers: MutableList<Flower>,
     private val intent: String?
-) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>(), Filterable {
 
     // Firebase instance variables
     private var mFirebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var database: DatabaseReference = Firebase.database.reference
+
+    // Create filtered flowers dataset
+    private var filteredFlowers = flowers
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,7 +49,7 @@ class RecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // - get element from your data set at this position
         // - replace the contents of the view with that element
-        val flower = Flowers[position]
+        val flower = filteredFlowers[position]
         holder.name.text = flower.name
         holder.detail.text = flower.detail
         // justify teh text alignment if it allows
@@ -88,7 +91,7 @@ class RecyclerViewAdapter(
         // only if the user choose to open wiki link. The default is true tho
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         if (sharedPreferences.getBoolean("openWiki", true)) {
-            holder.itemView.setOnClickListener {
+            holder.descriptionTextView.setOnClickListener {
                 // when the flower is clicked, open link in browser
                 context.startActivity(
                     Intent(
@@ -141,8 +144,41 @@ class RecyclerViewAdapter(
         }
     }
 
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+                filteredFlowers = if (charSearch.isEmpty()) {
+                    flowers
+                } else {
+                    val resultList: MutableList<Flower> = ArrayList()
+                    for (row in flowers) {
+                        if (row.name.toLowerCase(Locale.ROOT)
+                                .contains(charSearch.toLowerCase(Locale.ROOT))
+                        ) {
+                            resultList.add(row)
+                        }
+                    }
+                    resultList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = filteredFlowers
+                return filterResults
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                filteredFlowers = results?.values as MutableList<Flower>
+                notifyDataSetChanged()
+            }
+
+        }
+    }
+
     // Return the size of your data set (invoked by the layout manager)
-    override fun getItemCount(): Int = Flowers.size
+    override fun getItemCount(): Int {
+        return filteredFlowers.size
+    }
 
     // view holder, declare the UI component
     inner class ViewHolder(flowerCard: View) : RecyclerView.ViewHolder(flowerCard) {
@@ -152,5 +188,6 @@ class RecyclerViewAdapter(
         val icon: ImageView = flowerCard.flower_icon
         val saveButton: ImageButton = flowerCard.button_save
         val deleteButton: ImageButton = flowerCard.button_delete
+        val descriptionTextView: TextView = flowerCard.flower_description
     }
 }

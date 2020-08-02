@@ -333,7 +333,7 @@ class MainActivity : AppCompatActivity() {
                     myDataset.add(Flower(label, (probabilities[i]*100).toInt()))
                     Log.i("MLKit", label+": "+(probabilities[i]*100).toInt())
                 }
-                myDataset.sortDescending()
+                myDataset.sortByDescending { it.int }
                 intent.putExtra("flower1_name", myDataset[0].name)
                 intent.putExtra("flower2_name", myDataset[1].name)
                 intent.putExtra("flower3_name", myDataset[2].name)
