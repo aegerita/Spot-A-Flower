@@ -27,9 +27,9 @@ class FlowerInfoDB(private val context: Context) :
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_TABLE = "CREATE TABLE $TABLE_NAME " +
+        val create = "CREATE TABLE $TABLE_NAME " +
                 "($ID Integer PRIMARY KEY, $NAME TEXT, $INTRO TEXT, $WIKI TEXT, $ICON BLOB)"
-        db.execSQL(CREATE_TABLE)
+        db.execSQL(create)
 
         // prepopulate the database
         val reader = BufferedReader(
@@ -123,26 +123,6 @@ class FlowerInfoDB(private val context: Context) :
         }
         cursor.close()
         return myDataset
-    }
-    
-    private fun printAllFlowers(db: SQLiteDatabase) {
-        var allFlower = ""
-        val selectALLQuery = "SELECT * FROM $TABLE_NAME"
-        val cursor = db.rawQuery(selectALLQuery, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                do {
-                    val id = cursor.getString(cursor.getColumnIndex(ID))
-                    val name = cursor.getString(cursor.getColumnIndex(NAME))
-                    val description = cursor.getString(cursor.getColumnIndex(INTRO))
-                    val link = cursor.getString(cursor.getColumnIndex(INTRO))
-                    val icon = cursor.getBlob(cursor.getColumnIndex(ICON))
-                    allFlower = "$allFlower\n$id $name $icon $link $description"
-                } while (cursor.moveToNext())
-            }
-        }
-        cursor.close()
-        println(allFlower)
     }
 
     fun clear() {

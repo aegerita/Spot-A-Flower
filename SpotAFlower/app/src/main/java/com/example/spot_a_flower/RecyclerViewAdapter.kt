@@ -155,6 +155,8 @@ class RecyclerViewAdapter(
                     for (row in flowers) {
                         if (row.name.toLowerCase(Locale.ROOT)
                                 .contains(charSearch.toLowerCase(Locale.ROOT))
+                            || row.detail.toLowerCase(Locale.ROOT)
+                                .contains(charSearch.toLowerCase(Locale.ROOT))
                         ) {
                             resultList.add(row)
                         }

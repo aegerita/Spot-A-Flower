@@ -11,14 +11,12 @@
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="54dp"
         android:background="@color/colorPrimaryDark"
-        android:textCursorDrawable="@null"
-        android:visibility="invisible"
         app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:queryHint="Quick search by name"
         app:queryBackground="@null" />
 
     <include

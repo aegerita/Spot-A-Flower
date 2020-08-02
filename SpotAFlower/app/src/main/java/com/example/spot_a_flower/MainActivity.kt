@@ -357,6 +357,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options, menu)
         menu.findItem(R.id.encyclopedia).isVisible = true
+        menu.findItem(R.id.gallery).isVisible = true
         return true
     }
 
