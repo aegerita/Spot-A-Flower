@@ -91,7 +91,7 @@ class RecyclerViewAdapter(
         // only if the user choose to open wiki link. The default is true tho
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         if (sharedPreferences.getBoolean("openWiki", true)) {
-            holder.descriptionTextView.setOnClickListener {
+            val openWikiListener = View.OnClickListener { _ ->
                 // when the flower is clicked, open link in browser
                 context.startActivity(
                     Intent(
@@ -108,6 +108,9 @@ class RecyclerViewAdapter(
                     }
                 }
             }
+            holder.name.setOnClickListener(openWikiListener)
+            holder.icon.setOnClickListener(openWikiListener)
+            holder.description.setOnClickListener(openWikiListener)
         }
 
         // change star and save to database
@@ -190,6 +193,5 @@ class RecyclerViewAdapter(
         val icon: ImageView = flowerCard.flower_icon
         val saveButton: ImageButton = flowerCard.button_save
         val deleteButton: ImageButton = flowerCard.button_delete
-        val descriptionTextView: TextView = flowerCard.flower_description
     }
 }

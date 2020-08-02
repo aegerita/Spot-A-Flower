@@ -43,8 +43,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:tint="@color/colorPrimary"
             android:contentDescription="@string/pfp_frame"
+            android:tint="@color/colorPrimary"
             app:srcCompat="@drawable/empty_circle" />
 
     </FrameLayout>
