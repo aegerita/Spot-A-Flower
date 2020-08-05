@@ -97,7 +97,7 @@ class FlowerSearch : AppCompatActivity() {
                     if (newState != SCROLL_STATE_IDLE) {
                         val currentFirstVisible: Int =
                             viewManager.findFirstVisibleItemPosition()
-                        if (currentFirstVisible > rememberedPosition && searchBar.translationY > 100) {
+                        if (currentFirstVisible >= rememberedPosition && searchBar.translationY > 100) {
                             // hide search Bar
                             ObjectAnimator.ofFloat(searchBar, "translationY", 0f).apply {
                                 duration = 500

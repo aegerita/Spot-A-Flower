@@ -40,7 +40,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var currentPhotoPath: String
