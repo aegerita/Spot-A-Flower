@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_flowers.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-// TODO filter flowers
+// TODO quick scroll
 class RecyclerViewAdapter(
     private val context: Context,
     private val flowers: MutableList<Flower>,

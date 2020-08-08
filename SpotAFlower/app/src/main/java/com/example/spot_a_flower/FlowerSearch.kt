@@ -310,5 +310,4 @@ class FlowerSearch : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 }
