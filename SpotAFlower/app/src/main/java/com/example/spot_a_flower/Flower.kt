@@ -10,7 +10,7 @@ class Flower {
 
     constructor(name: String, time: Long) {
         this.name = name
-        val sdf = SimpleDateFormat("MMMd HH:mm:ss", Locale.CANADA)
+        val sdf = SimpleDateFormat("MMMd HH:mm", Locale.CANADA)
         this.detail = sdf.format(Date(time))
         this.int = 0
     }

@@ -134,7 +134,11 @@ class FlowerSearch : AppCompatActivity() {
 
                 // save the flower to history when search if the user choose so
                 val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-                if (sharedPreferences.getString("addHistoryWhen", "search") == "search") {
+                if (sharedPreferences.getBoolean(
+                        getString(R.string.store_after_search_key),
+                        true
+                    )
+                ) {
                     mFirebaseAuth.currentUser?.uid?.let {
                         database.child("users").child(it).child("history")
                             .child(myDataset[0].name).setValue(System.currentTimeMillis())

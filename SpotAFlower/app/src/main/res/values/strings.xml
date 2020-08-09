@@ -15,9 +15,19 @@
 
     <!-- Preferences -->
     <string name="open_wiki">Open flower in Wikipedia</string>
-    <string name="add_history">Add to History</string>
+    <string name="open_wiki_key">openWiki</string>
+    <string name="add_history">Store flowers to history:</string>
+    <string name="store_after_search">After searching</string>
+    <string name="store_after_search_key">storeAfterSearch</string>
+    <string name="store_after_wiki">After opening Wikipedia links</string>
+    <string name="store_after_wiki_key">storeAfterWiki</string>
+    <string name="theme_setting">Theme</string>
+    <string name="theme_setting_key">theme</string>
+    <string name="night_mode_title">Night Mode</string>
+
     <string name="helps">Helps</string>
     <string name="tutorial">Tutorial</string>
+    <string name="tutorial_key">tutorial</string>
     <string name="suggestion_report">Suggestions / Report Bugs</string>
     <string name="suggest_report_description">Write an email to the developer!</string>
     <string name="email">mailto:jennytai3221@gmail.com</string>

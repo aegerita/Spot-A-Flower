@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
@@ -7,32 +8,42 @@
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
-            app:key="openWiki"
+            app:key="@string/open_wiki_key"
             app:iconSpaceReserved="false"
             app:title="@string/open_wiki" />
 
-        <ListPreference
-            app:defaultValue="search"
-            app:dependency="openWiki"
-            app:entries="@array/history_setting_entries"
-            app:entryValues="@array/history_setting_values"
-            app:key="addHistoryWhen"
-            app:title="@string/add_history"
+        <Preference
+            android:addStatesFromChildren="false"
             app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:selectable="false"
+            app:title="@string/add_history" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@android:drawable/ic_menu_search"
+            android:key="@string/store_after_search_key"
+            android:title="@string/store_after_search" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@android:drawable/ic_menu_more"
+            android:key="@string/store_after_wiki_key"
+            android:title="@string/store_after_wiki"
+            app:dependency="@string/open_wiki_key" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="Theme">
+        app:title="@string/theme_setting">
 
         <ListPreference
             app:defaultValue="system"
             app:entries="@array/theme_setting_entries"
             app:entryValues="@array/theme_setting_values"
             app:iconSpaceReserved="false"
-            app:key="theme"
-            app:title="Night Mode"
+            app:key="@string/theme_setting_key"
+            app:title="@string/night_mode_title"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 </PreferenceScreen>

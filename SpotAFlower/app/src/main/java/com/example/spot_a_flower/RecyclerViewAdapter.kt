@@ -1,5 +1,6 @@
 package com.example.spot_a_flower
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -90,7 +91,7 @@ class RecyclerViewAdapter(
 
         // only if the user choose to open wiki link. The default is true tho
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        if (sharedPreferences.getBoolean("openWiki", true)) {
+        if (sharedPreferences.getBoolean(context.getString(R.string.open_wiki_key), true)) {
             val openWikiListener = View.OnClickListener { _ ->
                 // when the flower is clicked, open link in browser
                 context.startActivity(
@@ -100,8 +101,11 @@ class RecyclerViewAdapter(
                     )
                 )
                 // if the user choose to save to history when open link
-                if (sharedPreferences.getString("addHistoryWhen", "search") == "link") {
-                    println("save ${flower.name} to history")
+                if (sharedPreferences.getBoolean(
+                        context.getString(R.string.store_after_wiki_key),
+                        true
+                    )
+                ) {
                     mFirebaseAuth.currentUser?.uid?.let {
                         database.child("users").child(it).child("history")
                             .child(flower.name).setValue(System.currentTimeMillis())
@@ -118,14 +122,12 @@ class RecyclerViewAdapter(
             //holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
             if (holder.saveButton.tag == 1) {
                 // delete saved flower from user database
-                println("cancel storing " + flower.name)
                 mFirebaseAuth.currentUser?.uid?.let {
                     database.child("users").child(it).child("saved")
                         .child(flower.name).removeValue()
                 }
             } else {
                 // store the flower to saved database
-                println("save ${flower.name} to saved")
                 mFirebaseAuth.currentUser?.uid?.let {
                     database.child("users").child(it).child("saved")
                         .child(flower.name).setValue(System.currentTimeMillis())
@@ -138,11 +140,21 @@ class RecyclerViewAdapter(
             holder.deleteButton.isVisible = true
             holder.deleteButton.setOnClickListener {
                 // delete saved flower from user database
-                println("cancel history of " + flower.name)
-                mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it).child("history")
-                        .child(flower.name).removeValue()
-                }
+                AlertDialog.Builder(context)
+                    .setTitle("Delete Flower History")
+                    .setMessage(
+                        "     Are you sure to delete this flower?"
+                    )
+                    .setPositiveButton(
+                        android.R.string.yes
+                    ) { _, _ ->
+                        mFirebaseAuth.currentUser?.uid?.let {
+                            database.child("users").child(it).child("history")
+                                .child(flower.name).removeValue()
+                        }
+                    }
+                    .setNegativeButton(android.R.string.no, null)
+                    .show()
             }
         }
     }

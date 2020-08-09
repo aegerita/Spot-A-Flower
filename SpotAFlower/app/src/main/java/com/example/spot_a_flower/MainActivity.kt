@@ -18,11 +18,13 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -217,6 +219,14 @@ class MainActivity : AppCompatActivity() {
                     storagePermitted = false
                 }
             }
+        }
+
+        // set night mode
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        when (sharedPreferences.getString(getString(R.string.theme_setting_key), "system")) {
+            "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "night" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
         return
     }
@@ -428,7 +438,7 @@ class MainActivity : AppCompatActivity() {
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHMMSS", Locale.CANADA).format(Date())
+        val timeStamp: String = SimpleDateFormat("yyMMdd_HHmmss", Locale.CANADA).format(Date())
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
             "JPEG_${timeStamp}_", /* prefix */

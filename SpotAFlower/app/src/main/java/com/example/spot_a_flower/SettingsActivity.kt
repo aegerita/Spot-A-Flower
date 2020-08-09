@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.*
-import androidx.preference.ListPreference
+import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 
@@ -15,7 +15,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
 
-        // replace the frame by teh correct fragment
+        // replace the frame by the correct fragment
         val preferenceFrag: PreferenceFragmentCompat =
             if (intent.getStringExtra("Parent") == getString(R.string.setting)) {
                 SettingsFragment()
@@ -35,7 +35,7 @@ class SettingsActivity : AppCompatActivity() {
             setPreferencesFromResource(R.xml.settings_preferences, rootKey)
 
             // changes the theme when the user chooses night mode
-            val theme: Preference? = findPreference("theme")
+            val theme: Preference? = findPreference(getString(R.string.theme_setting_key))
             theme!!.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     when (newValue) {
@@ -47,11 +47,15 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
             // set the history preference to default when disabled
-            val wiki: Preference? = findPreference("openWiki")
+            val wiki: Preference? = findPreference(getString((R.string.open_wiki_key)))
             wiki!!.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     if (newValue == false)
-                        findPreference<ListPreference>("addHistoryWhen")!!.value = "search"
+                        findPreference<CheckBoxPreference>(
+                            getString(
+                                R.string.store_after_wiki_key
+                            )
+                        )?.isChecked = false
                     true
                 }
         }
@@ -61,7 +65,7 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.helps_preferences, rootKey)
             // TODO tutorial
-            val tutorial: Preference? = findPreference("tutorial")
+            val tutorial: Preference? = findPreference(getString(R.string.tutorial_key))
             tutorial!!.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     if (newValue == true)
@@ -70,6 +74,7 @@ class SettingsActivity : AppCompatActivity() {
                             "Tutorial is currently under development",
                             Toast.LENGTH_SHORT
                         ).show()
+                    tutorial.isEnabled = false
                     true
                 }
         }
