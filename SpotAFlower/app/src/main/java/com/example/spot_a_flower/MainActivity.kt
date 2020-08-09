@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(
                             this@MainActivity,
                             "Pls Allow Camera Access",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -235,7 +235,8 @@ class MainActivity : AppCompatActivity() {
                 print(mFirebaseAuth.currentUser.toString())
                 firebaseAuthWithGoogle(account.idToken!!)
             } else {
-                Toast.makeText(this, "Google Login Failed, check internet!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Google Login Failed, check internet!", Toast.LENGTH_LONG)
+                    .show()
             }
 
         } else if (resultCode == Activity.RESULT_CANCELED)
@@ -373,7 +374,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(
                         this@MainActivity,
                         "Pls Allow Access to Photo Storage",
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_LONG
                     ).show()
                 }
                 true

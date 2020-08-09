@@ -141,6 +141,14 @@ class FlowerSearch : AppCompatActivity() {
                     }
                 }
                 progressBar2.isVisible = false
+
+                if (mFirebaseAuth.currentUser == null) {
+                    Toast.makeText(
+                        this@FlowerSearch,
+                        "Sign up to save flowers to your account!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
 
             getString(R.string.history) -> {
@@ -258,7 +266,7 @@ class FlowerSearch : AppCompatActivity() {
         return true
     }
 
-    // delete user history
+    // delete user history and hide search bar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_history -> {
