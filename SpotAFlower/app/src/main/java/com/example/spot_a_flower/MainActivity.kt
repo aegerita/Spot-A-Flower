@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         // Initialize Firebase Auth
+        // TODO no internet?
         mFirebaseAuth = FirebaseAuth.getInstance()
         updateUI()
 
@@ -221,7 +222,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // set night mode
+        // set night mode (somehow have to check this after permission linearly)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         when (sharedPreferences.getString(getString(R.string.theme_setting_key), "system")) {
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)

@@ -10,6 +10,11 @@
     <string name="search">Spot-A-Flower</string>
     <string name="encyclopedia">Encyclopedia</string>
 
+    <!-- firebase branch names -->
+    <string name="fb_users">users</string>
+    <string name="fb_history">history</string>
+    <string name="fb_saved">saved</string>
+
     <!-- Preference Titles -->
     <string name="configuration_header">App Configuration</string>
 
@@ -54,5 +59,4 @@
     <string name="open_drawer">open drawer</string>
     <string name="close_drawer">close drawer</string>
     <string name="pfp_frame">pfp frame</string>
-
 </resources>

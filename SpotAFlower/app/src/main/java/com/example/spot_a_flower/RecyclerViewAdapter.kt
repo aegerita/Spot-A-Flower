@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_flowers.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-// TODO quick scroll
+// TODO alphabetical scroll: last time didn't work
 class RecyclerViewAdapter(
     private val context: Context,
     private val flowers: MutableList<Flower>,
@@ -65,8 +65,9 @@ class RecyclerViewAdapter(
 
         // save button status
         if (mFirebaseAuth.currentUser != null){
-            database.child("users").child(mFirebaseAuth.currentUser!!.uid)
-                .child("saved").child(flower.name)
+            database.child(context.getString(R.string.fb_users))
+                .child(mFirebaseAuth.currentUser!!.uid)
+                .child(context.getString(R.string.fb_saved)).child(flower.name)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         // initialize and update the UI
@@ -107,7 +108,8 @@ class RecyclerViewAdapter(
                     )
                 ) {
                     mFirebaseAuth.currentUser?.uid?.let {
-                        database.child("users").child(it).child("history")
+                        database.child(context.getString(R.string.fb_users)).child(it)
+                            .child(context.getString(R.string.fb_history))
                             .child(flower.name).setValue(System.currentTimeMillis())
                     }
                 }
@@ -122,14 +124,27 @@ class RecyclerViewAdapter(
             //holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
             if (holder.saveButton.tag == 1) {
                 // delete saved flower from user database
-                mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it).child("saved")
-                        .child(flower.name).removeValue()
-                }
+                AlertDialog.Builder(context)
+                    .setTitle("Delete Saved Flower")
+                    .setMessage(
+                        "Are you sure to delete this flower from saved?"
+                    )
+                    .setPositiveButton(
+                        android.R.string.yes
+                    ) { _, _ ->
+                        mFirebaseAuth.currentUser?.uid?.let {
+                            database.child(context.getString(R.string.fb_users)).child(it)
+                                .child(context.getString(R.string.fb_saved))
+                                .child(flower.name).removeValue()
+                        }
+                    }
+                    .setNegativeButton(android.R.string.no, null)
+                    .show()
             } else {
                 // store the flower to saved database
                 mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it).child("saved")
+                    database.child(context.getString(R.string.fb_users)).child(it)
+                        .child(context.getString(R.string.fb_saved))
                         .child(flower.name).setValue(System.currentTimeMillis())
                 }
             }
@@ -143,13 +158,14 @@ class RecyclerViewAdapter(
                 AlertDialog.Builder(context)
                     .setTitle("Delete Flower History")
                     .setMessage(
-                        "     Are you sure to delete this flower?"
+                        "Are you sure to delete this flower from history?"
                     )
                     .setPositiveButton(
                         android.R.string.yes
                     ) { _, _ ->
                         mFirebaseAuth.currentUser?.uid?.let {
-                            database.child("users").child(it).child("history")
+                            database.child(context.getString(R.string.fb_users)).child(it)
+                                .child(context.getString(R.string.fb_history))
                                 .child(flower.name).removeValue()
                         }
                     }

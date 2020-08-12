@@ -28,7 +28,6 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_search_success.*
 import java.util.*
 
-
 class FlowerSearch : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private var myDataset: MutableList<Flower> = ArrayList()
@@ -124,7 +123,7 @@ class FlowerSearch : AppCompatActivity() {
             })
         }
 
-        // TODO sorting
+        // TODO sorting in toolbar
         // change scenarios depending on parent activity
         when (intent.getStringExtra("Parent")) {
             getString(R.string.search) -> {
@@ -140,7 +139,8 @@ class FlowerSearch : AppCompatActivity() {
                     )
                 ) {
                     mFirebaseAuth.currentUser?.uid?.let {
-                        database.child("users").child(it).child("history")
+                        database.child(getString(R.string.fb_users)).child(it)
+                            .child(getString(R.string.fb_history))
                             .child(myDataset[0].name).setValue(System.currentTimeMillis())
                     }
                 }
@@ -158,7 +158,8 @@ class FlowerSearch : AppCompatActivity() {
             getString(R.string.history) -> {
                 // read history, turn to flower, and add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it).child("history").orderByValue()
+                    database.child(getString(R.string.fb_users)).child(it)
+                        .child(getString(R.string.fb_history)).orderByValue()
                         .addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 myDataset.clear()
@@ -192,8 +193,9 @@ class FlowerSearch : AppCompatActivity() {
             getString(R.string.saved) -> {
                 // read saved, get info from history, turn to flower, add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
-                    database.child("users").child(it).child("saved").orderByValue()
-                        .addValueEventListener(object : ValueEventListener {
+                    database.child(getString(R.string.fb_users)).child(it)
+                        .child(getString(R.string.fb_saved))
+                        .orderByValue().addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 myDataset.clear()
                                 for (flowerSnapshot in dataSnapshot.children) {
@@ -286,7 +288,8 @@ class FlowerSearch : AppCompatActivity() {
                     ) { _, _ ->
                         // delete user history in database
                         mFirebaseAuth.currentUser?.uid?.let {
-                            database.child("users").child(it).child("history").removeValue()
+                            database.child(getString(R.string.fb_users)).child(it)
+                                .child(getString(R.string.fb_history)).removeValue()
                         }
                         pageEmpty()
                     }

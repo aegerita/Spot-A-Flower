@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -65,7 +66,7 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.helps_preferences, rootKey)
             // TODO tutorial
-            val tutorial: Preference? = findPreference(getString(R.string.tutorial_key))
+            val tutorial = findPreference<SwitchPreferenceCompat>(getString(R.string.tutorial_key))
             tutorial!!.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     if (newValue == true)
@@ -74,7 +75,6 @@ class SettingsActivity : AppCompatActivity() {
                             "Tutorial is currently under development",
                             Toast.LENGTH_SHORT
                         ).show()
-                    tutorial.isEnabled = false
                     true
                 }
         }
