@@ -8,6 +8,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.google.firebase.auth.FirebaseAuth
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -47,16 +48,34 @@ class SettingsActivity : AppCompatActivity() {
                     true
                 }
 
+            // if no user, no storing
+            val mFirebaseAuth = FirebaseAuth.getInstance()
+            if (mFirebaseAuth.currentUser == null) {
+                findPreference<Preference>(getString(R.string.add_history_key))?.title =
+                    "Sign in to store flowers to your account >_<:"
+                findPreference<CheckBoxPreference>(getString(R.string.store_after_search_key))?.isEnabled =
+                    false
+                findPreference<CheckBoxPreference>(getString(R.string.store_after_wiki_key))?.isEnabled =
+                    false
+            }
+
             // set the history preference to default when disabled
-            val wiki: Preference? = findPreference(getString((R.string.open_wiki_key)))
-            wiki!!.onPreferenceChangeListener =
+            val wiki = findPreference<SwitchPreferenceCompat>(getString((R.string.open_wiki_key)))!!
+            val wikiP =
+                findPreference<CheckBoxPreference>(getString(R.string.store_after_wiki_key))!!
+            if (wiki.isChecked) {
+                wikiP.title = getString(R.string.store_after_wiki)
+                wikiP.summary = ""
+            }
+            wiki.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
-                    if (newValue == false)
-                        findPreference<CheckBoxPreference>(
-                            getString(
-                                R.string.store_after_wiki_key
-                            )
-                        )?.isChecked = false
+                    if (wikiP.isEnabled && newValue == false) {
+                        wikiP.title = ""
+                        wikiP.summary = getString(R.string.store_wiki_summary)
+                    } else {
+                        wikiP.title = getString(R.string.store_after_wiki)
+                        wikiP.summary = ""
+                    }
                     true
                 }
         }

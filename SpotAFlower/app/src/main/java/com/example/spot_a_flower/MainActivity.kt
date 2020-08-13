@@ -2,11 +2,13 @@ package com.example.spot_a_flower
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -74,7 +76,6 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         // Initialize Firebase Auth
-        // TODO no internet?
         mFirebaseAuth = FirebaseAuth.getInstance()
         updateUI()
 
@@ -93,55 +94,63 @@ class MainActivity : AppCompatActivity() {
 
         // set navigation drawer
         nav_view.setNavigationItemSelectedListener { menuItem ->
+            // don't open account pages if no internet
+            val connectivityManager =
+                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val internet = connectivityManager.activeNetworkInfo != null
+            drawer_layout.closeDrawer(GravityCompat.START)
             when (menuItem.itemId) {
                 R.id.account -> {
-                    drawer_layout.closeDrawer(GravityCompat.START)
-                    if (mFirebaseAuth.currentUser == null) {
-                        // log in account
-                        progressBar.isVisible = true
-                        val signInIntent =
-                            Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
-                        startActivityForResult(signInIntent, signInRequest)
-                    } else {
-                        // sign out account
-                        mFirebaseAuth.signOut()
-                        Auth.GoogleSignInApi.signOut(mGoogleApiClient)
-                        Toast.makeText(this, "Your account is signed out", Toast.LENGTH_SHORT)
-                            .show()
-                        updateUI()
-                    }
+                    if (internet) {
+                        if (mFirebaseAuth.currentUser == null) {
+                            // log in account
+                            progressBar.isVisible = true
+                            val signInIntent =
+                                Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient)
+                            startActivityForResult(signInIntent, signInRequest)
+                        } else {
+                            // sign out account
+                            mFirebaseAuth.signOut()
+                            Auth.GoogleSignInApi.signOut(mGoogleApiClient)
+                            Toast.makeText(this, "Your account is signed out", Toast.LENGTH_SHORT)
+                                .show()
+                            updateUI()
+                        }
+                    } else
+                        Toast.makeText(this, "Internet Error ;(", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.history -> {
-                    drawer_layout.closeDrawer(GravityCompat.START)
-                    val intent = Intent(this, FlowerSearch::class.java)
-                    intent.putExtra("Parent", getString(R.string.history))
-                    startActivity(intent)
+                    if (internet) {
+                        val intent = Intent(this, FlowerSearch::class.java)
+                        intent.putExtra("Parent", getString(R.string.history))
+                        startActivity(intent)
+                    } else
+                        Toast.makeText(this, "Internet Error ;(", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.saved -> {
-                    drawer_layout.closeDrawer(GravityCompat.START)
-                    val intent = Intent(this, FlowerSearch::class.java)
-                    intent.putExtra("Parent", getString(R.string.saved))
-                    startActivity(intent)
+                    if (internet) {
+                        val intent = Intent(this, FlowerSearch::class.java)
+                        intent.putExtra("Parent", getString(R.string.saved))
+                        startActivity(intent)
+                    } else
+                        Toast.makeText(this, "Internet Error ;(", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.setting -> {
-                    drawer_layout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, SettingsActivity::class.java)
                     intent.putExtra("Parent", getString(R.string.setting))
                     startActivity(intent)
                     true
                 }
                 R.id.help -> {
-                    drawer_layout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, SettingsActivity::class.java)
                     intent.putExtra("Parent", getString(R.string.helpsAbout))
                     startActivity(intent)
                     true
                 }
                 else -> {
-                    drawer_layout.closeDrawer(GravityCompat.START)
                     false
                 }
             }
@@ -196,6 +205,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // if the permission is not granted
+    // TODO apparently some functions must be done after this, so this also includes night theme
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -284,7 +294,6 @@ class MainActivity : AppCompatActivity() {
                 val selectedImage: Uri? = data.data
                 val imageBitmap =
                     MediaStore.Images.Media.getBitmap(this.contentResolver, selectedImage)
-                //logo.setImageURI(selectedImage)
                 searchFlower(imageBitmap)
             } else {
                 Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
@@ -420,7 +429,9 @@ class MainActivity : AppCompatActivity() {
             // sign in
             mFirebaseUser = mFirebaseAuth.currentUser!!
             nav_view.getHeaderView(0).username.text = mFirebaseUser.displayName
-            if (mFirebaseUser.photoUrl != null) {
+            val connectivityManager =
+                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (mFirebaseUser.photoUrl != null && connectivityManager.activeNetworkInfo != null) {
                 val profilePicture =
                     BitmapFactory.decodeStream(
                         URL(mFirebaseUser.photoUrl.toString()).content as InputStream?

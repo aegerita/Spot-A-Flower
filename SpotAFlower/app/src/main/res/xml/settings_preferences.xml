@@ -16,6 +16,7 @@
             android:addStatesFromChildren="false"
             app:iconSpaceReserved="false"
             app:selectable="false"
+            app:key="@string/add_history_key"
             app:title="@string/add_history" />
 
         <CheckBoxPreference

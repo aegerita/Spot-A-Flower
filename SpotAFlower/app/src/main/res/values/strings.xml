@@ -22,10 +22,12 @@
     <string name="open_wiki">Open flower in Wikipedia</string>
     <string name="open_wiki_key">openWiki</string>
     <string name="add_history">Store flowers to history:</string>
+    <string name="add_history_key">addHistoryWhen</string>
     <string name="store_after_search">After searching</string>
     <string name="store_after_search_key">storeAfterSearch</string>
     <string name="store_after_wiki">After opening Wikipedia links</string>
     <string name="store_after_wiki_key">storeAfterWiki</string>
+    <string name="store_wiki_summary">You have to be able to open wiki to enable this function -_-</string>
     <string name="theme_setting">Theme</string>
     <string name="theme_setting_key">theme</string>
     <string name="night_mode_title">Night Mode</string>

@@ -3,6 +3,7 @@ package com.example.spot_a_flower
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.text.Layout
@@ -64,7 +65,9 @@ class RecyclerViewAdapter(
         holder.icon.setImageBitmap(db.getIcon(flower.name))
 
         // save button status
-        if (mFirebaseAuth.currentUser != null){
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (mFirebaseAuth.currentUser != null && connectivityManager.activeNetworkInfo != null) {
             database.child(context.getString(R.string.fb_users))
                 .child(mFirebaseAuth.currentUser!!.uid)
                 .child(context.getString(R.string.fb_saved)).child(flower.name)
@@ -124,22 +127,24 @@ class RecyclerViewAdapter(
             //holder.saveButton.startAnimation(AlphaAnimation(1.0f, 0.2f))
             if (holder.saveButton.tag == 1) {
                 // delete saved flower from user database
-                AlertDialog.Builder(context)
-                    .setTitle("Delete Saved Flower")
-                    .setMessage(
-                        "Are you sure to delete this flower from saved?"
-                    )
-                    .setPositiveButton(
-                        android.R.string.yes
-                    ) { _, _ ->
-                        mFirebaseAuth.currentUser?.uid?.let {
-                            database.child(context.getString(R.string.fb_users)).child(it)
-                                .child(context.getString(R.string.fb_saved))
-                                .child(flower.name).removeValue()
-                        }
+                if (intent == context.getString(R.string.saved)) {
+                    AlertDialog.Builder(context)
+                        .setTitle("Delete Saved Flower")
+                        .setMessage("Are you sure to delete this flower from saved?")
+                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                            mFirebaseAuth.currentUser?.uid?.let {
+                                database.child(context.getString(R.string.fb_users)).child(it)
+                                    .child(context.getString(R.string.fb_saved))
+                                    .child(flower.name).removeValue()
+                            }
+                        }.setNegativeButton(android.R.string.no, null).show()
+                } else {
+                    mFirebaseAuth.currentUser?.uid?.let {
+                        database.child(context.getString(R.string.fb_users)).child(it)
+                            .child(context.getString(R.string.fb_saved))
+                            .child(flower.name).removeValue()
                     }
-                    .setNegativeButton(android.R.string.no, null)
-                    .show()
+                }
             } else {
                 // store the flower to saved database
                 mFirebaseAuth.currentUser?.uid?.let {
@@ -155,22 +160,15 @@ class RecyclerViewAdapter(
             holder.deleteButton.isVisible = true
             holder.deleteButton.setOnClickListener {
                 // delete saved flower from user database
-                AlertDialog.Builder(context)
-                    .setTitle("Delete Flower History")
-                    .setMessage(
-                        "Are you sure to delete this flower from history?"
-                    )
-                    .setPositiveButton(
-                        android.R.string.yes
-                    ) { _, _ ->
+                AlertDialog.Builder(context).setTitle("Delete Flower History")
+                    .setMessage("Are you sure to delete this flower from history?")
+                    .setPositiveButton(android.R.string.yes) { _, _ ->
                         mFirebaseAuth.currentUser?.uid?.let {
                             database.child(context.getString(R.string.fb_users)).child(it)
                                 .child(context.getString(R.string.fb_history))
                                 .child(flower.name).removeValue()
                         }
-                    }
-                    .setNegativeButton(android.R.string.no, null)
-                    .show()
+                    }.setNegativeButton(android.R.string.no, null).show()
             }
         }
     }

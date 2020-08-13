@@ -2,7 +2,9 @@ package com.example.spot_a_flower
 
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -152,6 +154,16 @@ class FlowerSearch : AppCompatActivity() {
                         "Sign up to save flowers to your account!",
                         Toast.LENGTH_LONG
                     ).show()
+                } else {
+                    val connectivityManager =
+                        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                    if (connectivityManager.activeNetworkInfo == null) {
+                        Toast.makeText(
+                            this,
+                            "Internet Error: Can't save results",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
 

@@ -5,6 +5,7 @@ import tensorflow_datasets as tfds
 import tensorflow_hub as hub
 from tensorflow.keras import layers
 from tensorflow.python.keras.layers.preprocessing.image_preprocessing import ResizeMethod
+from tensorflow.python.keras.regularizers import l1
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 image_size = 224
@@ -16,7 +17,7 @@ open("flower_model.tflite", "wb").write(tflite_model)
 
 ds_train, ds_validation = tfds.load(
     'oxford_flowers102',
-    split=['train+test+validation[:50%]', 'validation[-50%:]'],
+    split=['train+test+validation', 'validation'],
     shuffle_files=True,
     as_supervised=True,
 )
@@ -45,14 +46,13 @@ ds_validation = ds_validation.prefetch(tf.data.experimental.AUTOTUNE)
 
 # Create a Feature Extractor
 URL = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4"
-feature_extractor = hub.KerasLayer(URL,
-                                   input_shape=(image_size, image_size, 3))
+feature_extractor = hub.KerasLayer(URL, input_shape=(image_size, image_size, 3))
 # Freeze the Pre-Trained Model
 feature_extractor.trainable = False
 # Attach a classification head
 model = tf.keras.Sequential([
   feature_extractor,
-  layers.Dense(102, activation='softmax')
+  layers.Dense(102, activity_regularizer=l1(), activation='softmax')
 ])
 
 model.compile(
@@ -69,6 +69,6 @@ history = model.fit(
 
 loss, acc = model.evaluate(ds_validation, verbose=2)
 print("Restored model, accuracy: {:5.2f}%".format(100 * acc))
-if acc > 0.88:
+if acc > 0.89:
     model.save('flower_model')
     print('saved')
