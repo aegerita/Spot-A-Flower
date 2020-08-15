@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.text.format.Time
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -44,15 +45,14 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+// the main activity! rejoice to seeing my lovely logo!
 class MainActivity : AppCompatActivity() {
-
     private lateinit var currentPhotoPath: String
+    private var storagePermitted = true
     private val permissionRequest = 0
     private val requestImageCapture = 1
     private val requestGalleryPhoto = 2
     private val signInRequest = 3
-    private var storagePermitted = true
 
     // Firebase instance variables
     private lateinit var mFirebaseAuth: FirebaseAuth
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             "night" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
-        // do this to get internet connection
+        // do this to get internet connection TODO actually not sure if needed
         val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
@@ -86,18 +86,12 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance()
-        updateUI()
+        updateNavUI()
 
-        // add toolbar and add navigation toggle
+        // add toolbar and navigation toggle
         setSupportActionBar(toolbar)
         val actionBarDrawerToggle =
-            ActionBarDrawerToggle(
-                this,
-                drawer_layout,
-                toolbar,
-                R.string.open_drawer,
-                R.string.close_drawer
-            )
+            ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.open_drawer, R.string.close_drawer)
         drawer_layout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 
@@ -110,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             drawer_layout.closeDrawer(GravityCompat.START)
             when (menuItem.itemId) {
                 R.id.account -> {
-                    if (internet) {
+                    if (internet)
                         if (mFirebaseAuth.currentUser == null) {
                             // log in account
                             progressBar.isVisible = true
@@ -121,12 +115,11 @@ class MainActivity : AppCompatActivity() {
                             // sign out account
                             mFirebaseAuth.signOut()
                             Auth.GoogleSignInApi.signOut(mGoogleApiClient)
-                            Toast.makeText(this, "Your account is signed out", Toast.LENGTH_SHORT)
-                                .show()
-                            updateUI()
+                            Toast.makeText(this,
+                                "Your account is signed out", Toast.LENGTH_SHORT).show()
+                            updateNavUI()
                         }
-                    } else
-                        Toast.makeText(this, "Internet Error ;(", Toast.LENGTH_SHORT).show()
+                    else Toast.makeText(this, "Internet Error ;(", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.history -> {
@@ -159,9 +152,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-                else -> {
-                    false
-                }
+                else -> false
             }
         }
 
@@ -173,8 +164,7 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.INTERNET
                 ).toString()
-            )
-            != PackageManager.PERMISSION_GRANTED
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this, arrayOf(
@@ -192,6 +182,7 @@ class MainActivity : AppCompatActivity() {
                 // Ensure that there's a camera activity to handle the intent
                 takePictureIntent.resolveActivity(packageManager)?.also {
                     // Create the File where the photo should go
+                    // TODO which is true
                     val photoFile: File? = try {
                         createImageFile()
                     } catch (ex: IOException) {
@@ -201,14 +192,11 @@ class MainActivity : AppCompatActivity() {
                     // Continue only if the File was successfully created
                     photoFile?.also {
                         val photoURI: Uri =
+                            // configure for older version
                             if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT))
-                                FileProvider.getUriForFile(
-                                    this,
-                                    "com.example.spot_a_flower.fileProvider",
-                                    it
-                                )
-                            else
-                                Uri.fromFile(photoFile)
+                                FileProvider.getUriForFile(this,
+                                    "com.example.spot_a_flower.fileProvider", it)
+                            else Uri.fromFile(photoFile)
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         startActivityForResult(takePictureIntent, requestImageCapture)
                     }
@@ -226,22 +214,15 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             permissionRequest -> {
                 // camera
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED)
                     cameraButton.setOnClickListener {
-                        Toast.makeText(
-                            this@MainActivity,
-                            "Pls Allow Camera Access",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(this, "Pls Allow Camera Access", Toast.LENGTH_LONG).show()
                     }
-                }
                 // storage
                 if (grantResults.isNotEmpty() &&
                     (grantResults[1] == PackageManager.PERMISSION_DENIED ||
                             grantResults[2] == PackageManager.PERMISSION_DENIED)
-                ) {
-                    storagePermitted = false
-                }
+                ) storagePermitted = false
             }
         }
         return
@@ -253,17 +234,15 @@ class MainActivity : AppCompatActivity() {
 
         // do nothing if activity cancelled
         if (requestCode == signInRequest) {
-            progressBar.isVisible = false
             val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
             if (result!!.isSuccess) {
                 // Google Sign-In was successful, authenticate with Firebase
                 val account: GoogleSignInAccount = result.signInAccount!!
-                print(mFirebaseAuth.currentUser.toString())
+                //print(mFirebaseAuth.currentUser.toString())
                 firebaseAuthWithGoogle(account.idToken!!)
-            } else {
-                Toast.makeText(this, "Google Login Failed, check internet!", Toast.LENGTH_LONG)
-                    .show()
-            }
+            } else
+                Toast.makeText(this,
+                    "Google Login Failed, check internet!", Toast.LENGTH_LONG).show()
 
         } else if (resultCode == Activity.RESULT_CANCELED)
             return
@@ -275,21 +254,17 @@ class MainActivity : AppCompatActivity() {
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
             val imageBitmap = BitmapFactory.decodeFile(currentPhotoPath, options)
 
-            // save image to Pictures
+            // save image to Pictures if permission not granted
             if (storagePermitted) {
+                // TODO which is true
                 MediaStore.Images.Media.insertImage(
                     contentResolver, imageBitmap,
-                    "Flower_" + SimpleDateFormat("yyyyMMdd_HHMMSS", Locale.CANADA).format(Date()),
+                    "Flower_" + SimpleDateFormat("yyMMdd_HHmmss", Locale.getDefault()).format(Date()),
                     "from Spot-A-Flower"
                 )
-            } else {
-                // if permission not granted
-                Toast.makeText(
-                    this,
-                    "Allow Storage Access to Save Your Image",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            } else
+                Toast.makeText(this,
+                    "Allow Storage Access to Save Your Image", Toast.LENGTH_SHORT).show()
             //logo.setImageBitmap(imageBitmap)
             searchFlower(imageBitmap)
 
@@ -369,11 +344,8 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             .addOnFailureListener { e ->
-                Toast.makeText(
-                    this,
-                    "There is something wrong with the AI, mind trying again?",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this,
+                    "There is something wrong with the AI, mind trying again?", Toast.LENGTH_SHORT).show()
                 Log.w("TAG", "loadData:onCancelled", e)
             }
     }
@@ -395,13 +367,9 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(Intent.ACTION_PICK)
                     intent.type = "image/*"
                     startActivityForResult(intent, requestGalleryPhoto)
-                } else {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Pls Allow Access to Photo Storage",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                } else
+                    Toast.makeText(this,
+                        "Pls Allow Access to Photo Storage", Toast.LENGTH_LONG).show()
                 true
             }
             R.id.encyclopedia -> {
@@ -421,15 +389,14 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Authentication Successful!", Toast.LENGTH_SHORT).show()
-                    updateUI()
-                } else {
+                    updateNavUI()
+                } else
                     Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
-                }
             }
     }
 
     // change UI depending on the user login or not
-    private fun updateUI() {
+    private fun updateNavUI() {
         if (mFirebaseAuth.currentUser != null) {
             // sign in
             mFirebaseUser = mFirebaseAuth.currentUser!!
@@ -439,8 +406,7 @@ class MainActivity : AppCompatActivity() {
             if (mFirebaseUser.photoUrl != null && connectivityManager.activeNetworkInfo != null) {
                 val profilePicture =
                     BitmapFactory.decodeStream(
-                        URL(mFirebaseUser.photoUrl.toString()).content as InputStream?
-                    )
+                        URL(mFirebaseUser.photoUrl.toString()).content as InputStream?)
                 nav_view.getHeaderView(0).user_profile.setImageBitmap(profilePicture)
             }
             nav_view.menu.findItem(R.id.account).title = "Sign out"
@@ -459,7 +425,7 @@ class MainActivity : AppCompatActivity() {
             SimpleDateFormat("yyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
+            "Flower_${timeStamp}_", /* prefix */
             ".jpg", /* suffix */
             storageDir /* directory */
         ).apply {

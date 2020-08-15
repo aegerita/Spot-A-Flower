@@ -32,11 +32,12 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_search_success.*
 import java.util.*
 
+// multi-use activity for searching, saved, history, encyclopedia, failed-search...
 class FlowerSearch : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private var myDataset: MutableList<Flower> = ArrayList()
-    private var viewManager = LinearLayoutManager(this)
     private lateinit var viewAdapter: RecyclerViewAdapter
+    private var viewManager = LinearLayoutManager(this)
+    private var myDataset: MutableList<Flower> = ArrayList()
 
     // Firebase instance variables
     private lateinit var mFirebaseAuth: FirebaseAuth
@@ -63,85 +64,65 @@ class FlowerSearch : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = intent.getStringExtra("Parent")
 
-        // if user not signed in and open saved or history, warn
+        // if user not signed in and open saved or history, don't show flowers.
+        // otherwise normal search activities
         if (mFirebaseAuth.currentUser == null && (intent.getStringExtra("Parent") == getString(R.string.saved)
-                    || intent.getStringExtra("Parent") == getString(R.string.history))
-        ) {
+                    || intent.getStringExtra("Parent") == getString(R.string.history))) {
             pageEmpty()
-        } else
-            progressBar2.isVisible = true
+        } else progressBar2.isVisible = true
 
-        // TODO sorting in toolbar
+        // TODO sorting method in toolbar
         // change scenarios depending on parent activity
         when (intent.getStringExtra("Parent")) {
             getString(R.string.search) -> {
+                // add top 3 flowers
                 myDataset.add(Flower(intent.getStringExtra("flower1_name"), intent.getStringExtra("flower1_detail")))
                 myDataset.add(Flower(intent.getStringExtra("flower2_name"), intent.getStringExtra("flower2_detail")))
                 myDataset.add(Flower(intent.getStringExtra("flower3_name"), intent.getStringExtra("flower3_detail")))
 
                 // save the flower to history when search if the user choose so
                 val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-                if (sharedPreferences.getBoolean(
-                        getString(R.string.store_after_search_key),
-                        true
-                    )
-                ) {
+                if (sharedPreferences.getBoolean(getString(R.string.store_after_search_key), true)) {
                     mFirebaseAuth.currentUser?.uid?.let {
                         database.child(getString(R.string.fb_users)).child(it)
-                            .child(getString(R.string.fb_history))
-                            .child(myDataset[0].name).setValue(System.currentTimeMillis())
+                            .child(getString(R.string.fb_history)).child(myDataset[0].name)
+                            .setValue(System.currentTimeMillis())
                     }
                 }
-                progressBar2.isVisible = false
 
-                if (mFirebaseAuth.currentUser == null) {
-                    Toast.makeText(
-                        this@FlowerSearch,
-                        "Sign up to save flowers to your account!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
+                // remind user to make an account or connect to internet
+                if (mFirebaseAuth.currentUser == null)
+                    Toast.makeText(this,
+                    "Sign up to save flowers to your account!", Toast.LENGTH_LONG).show()
+                else {
                     val connectivityManager =
                         getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                    if (connectivityManager.activeNetworkInfo == null) {
-                        Toast.makeText(
-                            this,
-                            "Internet Error: Can't save results",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    if (connectivityManager.activeNetworkInfo == null)
+                        Toast.makeText(this,
+                            "Internet Error: Can't save results", Toast.LENGTH_SHORT).show()
                 }
+
+                progressBar2.isVisible = false
             }
 
             getString(R.string.history) -> {
                 // read history, turn to flower, and add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
-                    database.child(getString(R.string.fb_users)).child(it)
-                        .child(getString(R.string.fb_history)).orderByValue()
-                        .addValueEventListener(object : ValueEventListener {
+                    database.child(getString(R.string.fb_users)).child(it).child(getString(R.string.fb_history))
+                        .orderByValue().addValueEventListener(object : ValueEventListener {
+                            // refresh all the time
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 myDataset.clear()
-                                for (flowerSnapshot in dataSnapshot.children) {
-                                    myDataset.add(
-                                        0,
-                                        Flower(
-                                            flowerSnapshot.key!!,
-                                            flowerSnapshot.value as Long
-                                        )
-                                    )
-                                }
+                                // in reverse order
+                                for (flowerSnapshot in dataSnapshot.children)
+                                    myDataset.add(0, Flower(flowerSnapshot.key!!, flowerSnapshot.value as Long))
                                 viewAdapter.notifyDataSetChanged()
+                                // do things according to flowers amount
                                 if (myDataset.size == 0) pageEmpty()
                                 else if (myDataset.size > 5) searchBar()
                                 progressBar2.isVisible = false
                             }
-
                             override fun onCancelled(databaseError: DatabaseError) {
-                                Toast.makeText(
-                                    this@FlowerSearch,
-                                    "Error loading user database",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                                 Log.w("TAG", "loadData:onCancelled", databaseError.toException())
                                 progressBar2.isVisible = false
                             }
@@ -152,32 +133,19 @@ class FlowerSearch : AppCompatActivity() {
             getString(R.string.saved) -> {
                 // read saved, get info from history, turn to flower, add to dataset
                 mFirebaseAuth.currentUser?.uid?.let {
-                    database.child(getString(R.string.fb_users)).child(it)
-                        .child(getString(R.string.fb_saved))
+                    database.child(getString(R.string.fb_users)).child(it).child(getString(R.string.fb_saved))
                         .orderByValue().addValueEventListener(object : ValueEventListener {
+                            // same as history
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 myDataset.clear()
-                                for (flowerSnapshot in dataSnapshot.children) {
-                                    myDataset.add(
-                                        0,
-                                        Flower(
-                                            flowerSnapshot.key!!,
-                                            flowerSnapshot.value as Long
-                                        )
-                                    )
-                                }
+                                for (flowerSnapshot in dataSnapshot.children)
+                                    myDataset.add(0, Flower(flowerSnapshot.key!!, flowerSnapshot.value as Long))
                                 viewAdapter.notifyDataSetChanged()
                                 if (myDataset.size == 0) pageEmpty()
                                 else if (myDataset.size > 5) searchBar()
                                 progressBar2.isVisible = false
                             }
-
                             override fun onCancelled(databaseError: DatabaseError) {
-                                Toast.makeText(
-                                    this@FlowerSearch,
-                                    "Error loading user database",
-                                    Toast.LENGTH_SHORT
-                                ).show()
                                 Log.w("TAG", "loadData:onCancelled", databaseError.toException())
                                 progressBar2.isVisible = false
                             }
@@ -187,12 +155,10 @@ class FlowerSearch : AppCompatActivity() {
 
             getString(R.string.encyclopedia) -> {
                 // add all flowers to the dataset
-                val db = FlowerInfoDB(this)
-                for (Flower in db.getAllFlowers()) {
+                for (Flower in FlowerInfoDB(this).getAllFlowers())
                     myDataset.add(Flower)
-                }
                 if (myDataset.size == 0) pageEmpty()
-                else searchBar()
+                else if (myDataset.size > 5) searchBar()
                 myDataset.sortBy { it.name }
                 progressBar2.isVisible = false
             }
@@ -205,12 +171,12 @@ class FlowerSearch : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 viewAdapter.filter.filter(newText)
                 return false
             }
         })
+
         // modify search bar
         val searchIcon = searchBar.findViewById<ImageView>(R.id.search_mag_icon)
         searchIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorTitle))
@@ -223,36 +189,14 @@ class FlowerSearch : AppCompatActivity() {
         // visible when scroll down, invisible when scroll up
         var rememberedPosition = viewManager.findFirstVisibleItemPosition()
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(
-                recyclerView: RecyclerView,
-                newState: Int
-            ) {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState != SCROLL_STATE_IDLE) {
-                    val currentFirstVisible: Int =
-                        viewManager.findFirstVisibleItemPosition()
-                    if (currentFirstVisible >= rememberedPosition && searchBar.translationY > 100) {
-                        // hide search Bar
-                        ObjectAnimator.ofFloat(searchBar, "translationY", 0f).apply {
-                            duration = 500
-                            doOnEnd { searchBar.visibility = View.GONE }
-                            start()
-                        }
-                        ObjectAnimator.ofFloat(flower_list, "translationY", 0f).apply {
-                            duration = 500
-                            start()
-                        }
-                    } else if (currentFirstVisible < rememberedPosition && searchBar.translationY < 100) {
-                        // show search bar
-                        searchBar.isVisible = true
-                        ObjectAnimator.ofFloat(searchBar, "translationY", 150f).apply {
-                            duration = 500
-                            start()
-                        }
-                        ObjectAnimator.ofFloat(flower_list, "translationY", 132f).apply {
-                            duration = 500
-                            start()
-                        }
-                    }
+                    // compare current position to last position
+                    val currentFirstVisible: Int = viewManager.findFirstVisibleItemPosition()
+                    if (currentFirstVisible >= rememberedPosition && searchBar.translationY > 100)
+                        hideSearchBar()
+                    else if (currentFirstVisible < rememberedPosition && searchBar.translationY < 100)
+                        showSearchBar()
                     rememberedPosition = currentFirstVisible
                 }
             }
@@ -274,7 +218,6 @@ class FlowerSearch : AppCompatActivity() {
                     .setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
                 getString(R.string.fail_search_text)
             }
-            getString(R.string.encyclopedia) -> getString(R.string.fail_no_database)
             else -> getString(R.string.fail_no_database)
         }
         // set up toolbar
@@ -300,17 +243,12 @@ class FlowerSearch : AppCompatActivity() {
                 // alarm dialog, warn the user
                 AlertDialog.Builder(this)
                     .setTitle("Delete History")
-                    .setMessage(
-                        "Are you sure to delete user history? " +
-                                "Your history can not be restored. "
-                    )
-                    .setPositiveButton(
-                        android.R.string.yes
-                    ) { _, _ ->
+                    .setMessage("Are you sure to delete user history? " +
+                                "Your history can not be restored. ")
+                    .setPositiveButton(android.R.string.yes) { _, _ ->
                         // delete user history in database
                         mFirebaseAuth.currentUser?.uid?.let {
-                            database.child(getString(R.string.fb_users)).child(it)
-                                .child(getString(R.string.fb_history)).removeValue()
+                            database.child(getString(R.string.fb_users)).child(it).child(getString(R.string.fb_history)).removeValue()
                         }
                         pageEmpty()
                     }
@@ -320,31 +258,36 @@ class FlowerSearch : AppCompatActivity() {
             }
             R.id.filter -> {
                 // turn on or off the search bar
-                if (searchBar.translationY > 100) {
-                    // hide search Bar
-                    ObjectAnimator.ofFloat(searchBar, "translationY", 0f).apply {
-                        duration = 500
-                        start()
-                    }
-                    ObjectAnimator.ofFloat(flower_list, "translationY", 0f).apply {
-                        duration = 500
-                        start()
-                    }
-                } else {
-                    // show search bar
-                    searchBar.isVisible = true
-                    ObjectAnimator.ofFloat(searchBar, "translationY", 150f).apply {
-                        duration = 500
-                        start()
-                    }
-                    ObjectAnimator.ofFloat(flower_list, "translationY", 132f).apply {
-                        duration = 500
-                        start()
-                    }
-                }
+                if (searchBar.translationY > 100) hideSearchBar() else showSearchBar()
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    // scroll up
+    private fun showSearchBar() {
+        searchBar.isVisible = true
+        ObjectAnimator.ofFloat(searchBar, "translationY", 150f).apply {
+            duration = 500
+            start()
+        }
+        ObjectAnimator.ofFloat(flower_list, "translationY", 132f).apply {
+            duration = 500
+            start()
+        }
+    }
+
+    // scroll down
+    private fun hideSearchBar() {
+        ObjectAnimator.ofFloat(searchBar, "translationY", 0f).apply {
+            duration = 500
+            doOnEnd { searchBar.visibility = View.GONE }
+            start()
+        }
+        ObjectAnimator.ofFloat(flower_list, "translationY", 0f).apply {
+            duration = 500
+            start()
         }
     }
 }

@@ -39,7 +39,8 @@
     <string name="suggest_report_description">Write an email to the developer!</string>
     <string name="email">mailto:jennytai3221@gmail.com</string>
     <string name="about">About</string>
-    <string name="about_detail">This app is a personal side project by Jenny Tai, which includes Android development, Convolution Neural Network and user database. Glad to be of service!</string>
+    <string name="about_detail">This app is a personal side project by Jenny Tai, which includes
+        Android development, Convolution Neural Network and user database. Glad to be of service!</string>
     <string name="track_development">Track Development</string>
     <string name="github_link">https://github.com/aegerita/Spot-A-Flower</string>
 
@@ -61,4 +62,10 @@
     <string name="open_drawer">open drawer</string>
     <string name="close_drawer">close drawer</string>
     <string name="pfp_frame">pfp frame</string>
+    <string name="default_description">Lily (members of which are true lilies) is a genus of
+        herbaceous flowering plants growing from bulbs, all with large prominent flowers. Lilies
+        are a group of flowering plants which are important in culture and literature in much of
+        the world. Most species are native to the temperate northern hemisphere, though their range
+        extends into the northern subtropics. Many other plants have "lily" in their common name but
+        are not related to true lilies.</string>
 </resources>
