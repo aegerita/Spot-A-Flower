@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
@@ -191,11 +192,15 @@ class MainActivity : AppCompatActivity() {
                     }
                     // Continue only if the File was successfully created
                     photoFile?.also {
-                        val photoURI: Uri = FileProvider.getUriForFile(
-                            this,
-                            "com.example.spot_a_flower.fileProvider",
-                            it
-                        )
+                        val photoURI: Uri =
+                            if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT))
+                                FileProvider.getUriForFile(
+                                    this,
+                                    "com.example.spot_a_flower.fileProvider",
+                                    it
+                                )
+                            else
+                                Uri.fromFile(photoFile)
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         startActivityForResult(takePictureIntent, requestImageCapture)
                     }

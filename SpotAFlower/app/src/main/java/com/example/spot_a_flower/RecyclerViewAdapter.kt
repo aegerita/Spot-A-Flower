@@ -64,14 +64,13 @@ class RecyclerViewAdapter(
         holder.description.text = db.getDescription(flower.name)
         holder.icon.setImageBitmap(db.getIcon(flower.name))
 
-        // save button status
+        // save button status (only with internet)
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (mFirebaseAuth.currentUser != null && connectivityManager.activeNetworkInfo != null) {
             database.child(context.getString(R.string.fb_users))
-                .child(mFirebaseAuth.currentUser!!.uid)
-                .child(context.getString(R.string.fb_saved)).child(flower.name)
-                .addValueEventListener(object : ValueEventListener {
+                .child(mFirebaseAuth.currentUser!!.uid).child(context.getString(R.string.fb_saved))
+                .child(flower.name).addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         // initialize and update the UI
                         if (dataSnapshot.exists()) {
@@ -82,10 +81,7 @@ class RecyclerViewAdapter(
                             holder.saveButton.setImageResource(android.R.drawable.star_off)
                         }
                     }
-
                     override fun onCancelled(error: DatabaseError) {
-                        Toast.makeText(context, "Error loading user database", Toast.LENGTH_SHORT)
-                            .show()
                         Log.w("TAG", "loadData:onCancelled", error.toException())
                     }
                 })
@@ -93,7 +89,7 @@ class RecyclerViewAdapter(
             holder.saveButton.isVisible = false
         }
 
-        // only if the user choose to open wiki link. The default is true tho
+        // only if the user choose to open wiki link.
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         if (sharedPreferences.getBoolean(context.getString(R.string.open_wiki_key), true)) {
             val openWikiListener = View.OnClickListener { _ ->

@@ -9,11 +9,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
@@ -66,64 +68,8 @@ class FlowerSearch : AppCompatActivity() {
                     || intent.getStringExtra("Parent") == getString(R.string.history))
         ) {
             pageEmpty()
-        } else {
+        } else
             progressBar2.isVisible = true
-            // make a search bar
-            searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    viewAdapter.filter.filter(newText)
-                    return false
-                }
-            })
-            // modify search bar
-            val searchIcon = searchBar.findViewById<ImageView>(R.id.search_mag_icon)
-            searchIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorTitle))
-            val cancelIcon = searchBar.findViewById<ImageView>(R.id.search_close_btn)
-            cancelIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorTitle))
-            val textView = searchBar.findViewById<TextView>(R.id.search_src_text)
-            textView.setTextColor(ContextCompat.getColor(this, R.color.colorTitle))
-            textView.setHintTextColor(Color.parseColor("#eeeeee"))
-
-            // visible when scroll down, invisible when scroll up
-            var rememberedPosition = viewManager.findFirstVisibleItemPosition()
-            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(
-                    recyclerView: RecyclerView,
-                    newState: Int
-                ) {
-                    if (newState != SCROLL_STATE_IDLE) {
-                        val currentFirstVisible: Int =
-                            viewManager.findFirstVisibleItemPosition()
-                        if (currentFirstVisible >= rememberedPosition && searchBar.translationY > 100) {
-                            // hide search Bar
-                            ObjectAnimator.ofFloat(searchBar, "translationY", 0f).apply {
-                                duration = 500
-                                start()
-                            }
-                            ObjectAnimator.ofFloat(flower_list, "translationY", 0f).apply {
-                                duration = 500
-                                start()
-                            }
-                        } else if (currentFirstVisible < rememberedPosition && searchBar.translationY < 100) {
-                            // show search bar
-                            ObjectAnimator.ofFloat(searchBar, "translationY", 144f).apply {
-                                duration = 500
-                                start()
-                            }
-                            ObjectAnimator.ofFloat(flower_list, "translationY", 132f).apply {
-                                duration = 500
-                                start()
-                            }
-                        }
-                        rememberedPosition = currentFirstVisible
-                    }
-                }
-            })
-        }
 
         // TODO sorting in toolbar
         // change scenarios depending on parent activity
@@ -186,6 +132,7 @@ class FlowerSearch : AppCompatActivity() {
                                 }
                                 viewAdapter.notifyDataSetChanged()
                                 if (myDataset.size == 0) pageEmpty()
+                                else if (myDataset.size > 5) searchBar()
                                 progressBar2.isVisible = false
                             }
 
@@ -221,6 +168,7 @@ class FlowerSearch : AppCompatActivity() {
                                 }
                                 viewAdapter.notifyDataSetChanged()
                                 if (myDataset.size == 0) pageEmpty()
+                                else if (myDataset.size > 5) searchBar()
                                 progressBar2.isVisible = false
                             }
 
@@ -244,10 +192,71 @@ class FlowerSearch : AppCompatActivity() {
                     myDataset.add(Flower)
                 }
                 if (myDataset.size == 0) pageEmpty()
+                else searchBar()
                 myDataset.sortBy { it.name }
                 progressBar2.isVisible = false
             }
         }
+    }
+
+    private fun searchBar() {
+        // make a search bar
+        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewAdapter.filter.filter(newText)
+                return false
+            }
+        })
+        // modify search bar
+        val searchIcon = searchBar.findViewById<ImageView>(R.id.search_mag_icon)
+        searchIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorTitle))
+        val cancelIcon = searchBar.findViewById<ImageView>(R.id.search_close_btn)
+        cancelIcon.setColorFilter(ContextCompat.getColor(this, R.color.colorTitle))
+        val textView = searchBar.findViewById<TextView>(R.id.search_src_text)
+        textView.setTextColor(ContextCompat.getColor(this, R.color.colorTitle))
+        textView.setHintTextColor(Color.parseColor("#eeeeee"))
+
+        // visible when scroll down, invisible when scroll up
+        var rememberedPosition = viewManager.findFirstVisibleItemPosition()
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(
+                recyclerView: RecyclerView,
+                newState: Int
+            ) {
+                if (newState != SCROLL_STATE_IDLE) {
+                    val currentFirstVisible: Int =
+                        viewManager.findFirstVisibleItemPosition()
+                    if (currentFirstVisible >= rememberedPosition && searchBar.translationY > 100) {
+                        // hide search Bar
+                        ObjectAnimator.ofFloat(searchBar, "translationY", 0f).apply {
+                            duration = 500
+                            doOnEnd { searchBar.visibility = View.GONE }
+                            start()
+                        }
+                        ObjectAnimator.ofFloat(flower_list, "translationY", 0f).apply {
+                            duration = 500
+                            start()
+                        }
+                    } else if (currentFirstVisible < rememberedPosition && searchBar.translationY < 100) {
+                        // show search bar
+                        searchBar.isVisible = true
+                        ObjectAnimator.ofFloat(searchBar, "translationY", 150f).apply {
+                            duration = 500
+                            start()
+                        }
+                        ObjectAnimator.ofFloat(flower_list, "translationY", 132f).apply {
+                            duration = 500
+                            start()
+                        }
+                    }
+                    rememberedPosition = currentFirstVisible
+                }
+            }
+        })
     }
 
     // if dataset empty, all goes to fail page
@@ -323,7 +332,8 @@ class FlowerSearch : AppCompatActivity() {
                     }
                 } else {
                     // show search bar
-                    ObjectAnimator.ofFloat(searchBar, "translationY", 144f).apply {
+                    searchBar.isVisible = true
+                    ObjectAnimator.ofFloat(searchBar, "translationY", 150f).apply {
                         duration = 500
                         start()
                     }
