@@ -62,6 +62,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // set night mode (somehow have to check this after permission linearly)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        when (sharedPreferences.getString(getString(R.string.theme_setting_key), "system")) {
+            "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "night" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
+
         // do this to get internet connection
         val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -210,7 +218,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     // if the permission is not granted
-    // TODO apparently some functions must be done after this, so this also includes night theme
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -219,7 +226,7 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             permissionRequest -> {
                 // camera
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     cameraButton.setOnClickListener {
                         Toast.makeText(
                             this@MainActivity,
@@ -229,20 +236,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 // storage
-                if (grantResults[1] == PackageManager.PERMISSION_DENIED ||
-                    grantResults[2] == PackageManager.PERMISSION_DENIED
+                if (grantResults.isNotEmpty() &&
+                    (grantResults[1] == PackageManager.PERMISSION_DENIED ||
+                            grantResults[2] == PackageManager.PERMISSION_DENIED)
                 ) {
                     storagePermitted = false
                 }
             }
-        }
-
-        // set night mode (somehow have to check this after permission linearly)
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        when (sharedPreferences.getString(getString(R.string.theme_setting_key), "system")) {
-            "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            "night" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
         return
     }
