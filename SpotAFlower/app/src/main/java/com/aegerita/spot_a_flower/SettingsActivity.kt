@@ -1,4 +1,4 @@
-package com.example.spot_a_flower
+package com.aegerita.spot_a_flower
 
 import android.os.Bundle
 import android.widget.Toast

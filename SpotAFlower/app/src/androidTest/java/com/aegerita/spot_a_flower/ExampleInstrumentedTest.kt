@@ -1,4 +1,4 @@
-package com.example.spot_a_flower
+package com.aegerita.spot_a_flower
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.spot_a_flower">
+    package="com.aegerita.spot_a_flower">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,7 +22,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.spot_a_flower.fileProvider"
+            android:authorities="com.aegerita.spot_a_flower.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -31,13 +31,13 @@
         </provider>
 
         <activity
-            android:name=".FlowerSearch"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.aegerita.spot_a_flower.FlowerSearch"
+            android:parentActivityName="com.aegerita.spot_a_flower.MainActivity" />
         <activity
-            android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.aegerita.spot_a_flower.SettingsActivity"
+            android:parentActivityName="com.aegerita.spot_a_flower.MainActivity" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.aegerita.spot_a_flower.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -2,5 +2,5 @@
 <paths>
     <external-path
         name="my_images"
-        path="Android/data/com.example.spot_a_flower/files/Pictures" />
+        path="Android/data/com.aegerita.spot_a_flower/files/Pictures" />
 </paths>

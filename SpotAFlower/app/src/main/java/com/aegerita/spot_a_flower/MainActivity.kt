@@ -1,4 +1,4 @@
-package com.example.spot_a_flower
+package com.aegerita.spot_a_flower
 
 import android.Manifest
 import android.app.Activity
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             "night" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
-        // do this to get internet connection TODO actually not sure if needed
+        // do this to get internet connection
         val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
@@ -198,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                             // configure for older version
                             if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT))
                                 FileProvider.getUriForFile(this,
-                                    "com.example.spot_a_flower.fileProvider", it)
+                                    "com.aegerita.spot_a_flower.fileProvider", it)
                             else Uri.fromFile(photoFile)
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         startActivityForResult(takePictureIntent, requestImageCapture)
@@ -433,6 +433,7 @@ class MainActivity : AppCompatActivity() {
             storageDir /* directory */
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
+            Log.i("fewfe", "awfouefhawoefhoawehfoawhefo" + storageDir)
             currentPhotoPath = absolutePath
         }
     }

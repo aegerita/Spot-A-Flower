@@ -10,7 +10,7 @@ android {
     kotlinOptions { jvmTarget = "1.8" }
 
     defaultConfig {
-        applicationId "com.example.spot_a_flower"
+        applicationId "com.aegerita.spot_a_flower"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1

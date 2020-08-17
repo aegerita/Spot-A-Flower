@@ -1,4 +1,4 @@
-package com.example.spot_a_flower
+package com.aegerita.spot_a_flower
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
