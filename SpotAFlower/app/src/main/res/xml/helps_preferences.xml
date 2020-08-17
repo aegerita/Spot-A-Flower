@@ -24,7 +24,6 @@
                     android:value="Spot-A-Flower Feedback" />
             </intent>
         </Preference>
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -42,6 +41,16 @@
                 android:action="android.intent.action.VIEW"
                 android:data="@string/github_link" />
         </Preference>
-
     </PreferenceCategory>
+
+    <!-- TODO disclaimer
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="Disclaimer">
+        <Preference
+            app:iconSpaceReserved="false"
+            app:selectable="false"
+            app:summary=""/>
+    </PreferenceCategory>
+    -->
 </PreferenceScreen>

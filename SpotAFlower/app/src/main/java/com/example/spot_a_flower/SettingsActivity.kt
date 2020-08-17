@@ -10,7 +10,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.google.firebase.auth.FirebaseAuth
 
-
+// for setting and help & about
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,11 +19,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // replace the frame by the correct fragment
         val preferenceFrag: PreferenceFragmentCompat =
-            if (intent.getStringExtra("Parent") == getString(R.string.setting)) {
-                SettingsFragment()
-            } else {
-                HelpsFragment()
-            }
+            if (intent.getStringExtra("Parent") == getString(R.string.setting)) SettingsFragment() else HelpsFragment()
         supportFragmentManager.beginTransaction().replace(R.id.settings, preferenceFrag).commit()
 
         // set toolbar
@@ -53,16 +49,13 @@ class SettingsActivity : AppCompatActivity() {
             if (mFirebaseAuth.currentUser == null) {
                 findPreference<Preference>(getString(R.string.add_history_key))?.title =
                     "Sign in to store flowers to your account >_<:"
-                findPreference<CheckBoxPreference>(getString(R.string.store_after_search_key))?.isEnabled =
-                    false
-                findPreference<CheckBoxPreference>(getString(R.string.store_after_wiki_key))?.isEnabled =
-                    false
+                findPreference<CheckBoxPreference>(getString(R.string.store_after_search_key))?.isEnabled = false
+                findPreference<CheckBoxPreference>(getString(R.string.store_after_wiki_key))?.isEnabled = false
             }
 
             // set the history preference to default when disabled
             val wiki = findPreference<SwitchPreferenceCompat>(getString((R.string.open_wiki_key)))!!
-            val wikiP =
-                findPreference<CheckBoxPreference>(getString(R.string.store_after_wiki_key))!!
+            val wikiP = findPreference<CheckBoxPreference>(getString(R.string.store_after_wiki_key))!!
             if (wiki.isChecked) {
                 wikiP.title = getString(R.string.store_after_wiki)
                 wikiP.summary = ""
@@ -89,11 +82,8 @@ class SettingsActivity : AppCompatActivity() {
             tutorial!!.onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     if (newValue == true)
-                        Toast.makeText(
-                            context,
-                            "Tutorial is currently under development",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(context,
+                            "Tutorial is currently under development", Toast.LENGTH_SHORT).show()
                     true
                 }
         }

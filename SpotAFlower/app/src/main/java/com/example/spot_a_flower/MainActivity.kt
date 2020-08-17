@@ -15,7 +15,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
-import android.text.format.Time
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -181,8 +180,12 @@ class MainActivity : AppCompatActivity() {
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
                 // Ensure that there's a camera activity to handle the intent
                 takePictureIntent.resolveActivity(packageManager)?.also {
+                    // tell user to take clear and focused picture
+                    Toast.makeText(this,
+                        "Take a large picture of a single flower to increase accuracy!",
+                        Toast.LENGTH_LONG).show()
                     // Create the File where the photo should go
-                    // TODO which is true
+                    // this is needed as well as line 263
                     val photoFile: File? = try {
                         createImageFile()
                     } catch (ex: IOException) {
@@ -256,7 +259,7 @@ class MainActivity : AppCompatActivity() {
 
             // save image to Pictures if permission not granted
             if (storagePermitted) {
-                // TODO which is true
+                // this is needed as well as line 189
                 MediaStore.Images.Media.insertImage(
                     contentResolver, imageBitmap,
                     "Flower_" + SimpleDateFormat("yyMMdd_HHmmss", Locale.getDefault()).format(Date()),
