@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "70865465845",
+    "firebase_url": "https://spot-a-flower.firebaseio.com",
+    "project_id": "spot-a-flower",
+    "storage_bucket": "spot-a-flower.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70865465845:android:fc4f0dd7444982e25e70bc",
+        "android_client_info": {
+          "package_name": "com.aegerita.spot_a_flower"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70865465845-iihfeqeckrud0ikbg1ii3vo520svl2e5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aegerita.spot_a_flower",
+            "certificate_hash": "bda6f213b448f9bd02477e24b29aba1c300b9787"
+          }
+        },
+        {
+          "client_id": "70865465845-usm8bjek97b8nit35dvlrjh3n1g994le.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1NkvyZnDnaPvfOH4jApklk-wEiX26VTg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70865465845-usm8bjek97b8nit35dvlrjh3n1g994le.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
