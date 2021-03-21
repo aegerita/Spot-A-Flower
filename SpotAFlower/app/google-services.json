@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "70865465845-544jg49hhrr3r3najuugp0jvnfdqtvb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aegerita.spot_a_flower",
+            "certificate_hash": "273b55bfe0e4799d31a3854712bdf88e8bbb7593"
+          }
+        },
+        {
           "client_id": "70865465845-iihfeqeckrud0ikbg1ii3vo520svl2e5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
